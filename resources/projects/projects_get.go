@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/muesli/cct/db"
+	"gitlab.techcultivation.org/techcultivation/sangha/db"
 
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"

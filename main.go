@@ -6,12 +6,12 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/muesli/cct/config"
-	"github.com/muesli/cct/db"
+	"gitlab.techcultivation.org/techcultivation/sangha/config"
+	"gitlab.techcultivation.org/techcultivation/sangha/db"
 
-	//	"github.com/muesli/cct/resources/sessions"
-	"github.com/muesli/cct/resources/projects"
-	"github.com/muesli/cct/resources/users"
+	//	"gitlab.techcultivation.org/techcultivation/sangha/resources/sessions"
+	"gitlab.techcultivation.org/techcultivation/sangha/resources/projects"
+	"gitlab.techcultivation.org/techcultivation/sangha/resources/users"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/emicklei/go-restful-swagger12"

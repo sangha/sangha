@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/muesli/cct/config"
+	"gitlab.techcultivation.org/techcultivation/sangha/config"
 
 	"github.com/lib/pq"
 	"github.com/muesli/cache2go"

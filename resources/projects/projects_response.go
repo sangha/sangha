@@ -1,7 +1,7 @@
 package projects
 
 import (
-	"github.com/muesli/cct/db"
+	"gitlab.techcultivation.org/techcultivation/sangha/db"
 
 	"github.com/muesli/smolder"
 )
