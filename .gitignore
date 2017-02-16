@@ -23,6 +23,9 @@ _testmain.go
 *.test
 *.prof
 
+# Backup files
+*~
+
 # Sangha stuff
 sangha
 config.json
