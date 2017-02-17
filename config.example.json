@@ -1,0 +1,24 @@
+{
+    "API": {
+        "BaseURL":              "http://localhost:9991",
+        "PathPrefix":           "v1/",
+        "Bind":                 ":9991",
+
+        "SwaggerAPIPath":       "/apidocs.json",
+        "SwaggerPath":          "/apidocs/",
+        "SwaggerFilePath":      "/home/muesli/Sources/swagger-ui/dist"
+    },
+
+    "Connections": {
+        "PostgreSQLConnection": {
+            "Host":             "localhost",
+            "DbName":           "sangha",
+            "User":             "user",
+            "Password":         "password"
+        }
+    },
+
+    "Web": {
+        "BaseURL":              "http://localhost:4200/"
+    }
+}
