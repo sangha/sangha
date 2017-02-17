@@ -11,6 +11,12 @@ go get -u
 go build
 ```
 
+### Run sangha
+
+```
+./sangha
+```
+
 ### Reference
 
 Visit Swagger: http://localhost:9991/apidocs/
