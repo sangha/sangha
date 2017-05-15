@@ -12,14 +12,17 @@ import (
 // ProjectPostStruct holds all values of an incoming POST request
 type ProjectPostStruct struct {
 	Project struct {
-		Name  string `json:"name"`
-		About string `json:"about"`
+		Name       string `json:"name"`
+		About      string `json:"about"`
+		Website    string `json:"website"`
+		License    string `json:"license"`
+		Repository string `json:"repository"`
 	} `json:"project"`
 }
 
 // PostAuthRequired returns true because all requests need authentication
 func (r *ProjectResource) PostAuthRequired() bool {
-	return true
+	return false
 }
 
 // PostDoc returns the description of this API endpoint
@@ -34,18 +37,18 @@ func (r *ProjectResource) PostParams() []*restful.Parameter {
 
 // Post processes an incoming POST (create) request
 func (r *ProjectResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
-	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.Project).ID != 1 {
+	/*auth, err := context.Authentication(request)
+		if err != nil || auth.(db.Project).ID != 1 {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusUnauthorized,
 			false,
 			"Admin permission required for this operation",
 			"ProjectResource POST"))
 		return
-	}
+	}*/
 
 	ups := ProjectPostStruct{}
-	err = request.ReadEntity(&ups)
+	err := request.ReadEntity(&ups)
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusBadRequest,
@@ -56,8 +59,11 @@ func (r *ProjectResource) Post(context smolder.APIContext, request *restful.Requ
 	}
 
 	project := db.Project{
-		Name:  ups.Project.Name,
-		About: ups.Project.About,
+		Name:       ups.Project.Name,
+		About:      ups.Project.About,
+		Website:    ups.Project.Website,
+		License:    ups.Project.License,
+		Repository: ups.Project.Repository,
 	}
 	err = project.Save(context.(*db.APIContext))
 	if err != nil {

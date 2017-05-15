@@ -16,7 +16,7 @@ type ProjectResponse struct {
 
 type projectInfoResponse struct {
 	ID         int64  `json:"id"`
-	Name       string `json:"nickname"`
+	Name       string `json:"name"`
 	About      string `json:"about"`
 	Website    string `json:"website"`
 	License    string `json:"license"`

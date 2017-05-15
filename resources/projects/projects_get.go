@@ -1,7 +1,6 @@
 package projects
 
 import (
-	"net/http"
 	"strconv"
 
 	"gitlab.techcultivation.org/techcultivation/sangha/db"
@@ -61,36 +60,14 @@ func (r *ProjectResource) Get(context smolder.APIContext, request *restful.Reque
 	resp := ProjectResponse{}
 	resp.Init(context)
 
-	token := params["token"]
-	if len(token) > 0 {
-		auth, err := context.(*db.APIContext).GetUserByAccessToken(token[0])
-		if auth == nil || err != nil {
-			r.NotFound(request, response)
-			return
-		}
-		project := auth.(db.Project)
+	projects, err := context.(*db.APIContext).LoadAllProjects()
+	if err != nil {
+		r.NotFound(request, response)
+		return
+	}
 
+	for _, project := range projects {
 		resp.AddProject(&project)
-	} else {
-		auth, err := context.Authentication(request)
-		if err != nil || auth == nil || auth.(db.Project).ID != 1 {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-				http.StatusUnauthorized,
-				false,
-				"Admin permission required for this operation",
-				"ProjectResource GET"))
-			return
-		}
-
-		projects, err := context.(*db.APIContext).LoadAllProjects()
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
-
-		for _, project := range projects {
-			resp.AddProject(&project)
-		}
 	}
 
 	resp.Send(response)

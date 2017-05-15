@@ -59,7 +59,8 @@ func (context *APIContext) LoadAllProjects() ([]Project, error) {
 
 // Update a project in the database
 func (project *Project) Update(context *APIContext) error {
-	_, err := context.Exec("UPDATE projects SET about = $1, name = $2 WHERE id = $3", project.About, project.Name, project.ID)
+	_, err := context.Exec("UPDATE projects SET about = $1, name = $2, website = $3, license = $4, repository = $5 WHERE id = $6",
+		project.About, project.Name, project.Website, project.License, project.Repository, project.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -70,7 +71,8 @@ func (project *Project) Update(context *APIContext) error {
 
 // Save a project to the database
 func (project *Project) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO projects (name, about) VALUES ($1, $2) RETURNING id", project.Name, project.About).Scan(&project.ID)
+	err := context.QueryRow("INSERT INTO projects (name, about, website, license, repository) VALUES ($1, $2) RETURNING id",
+		project.Name, project.About, project.Website, project.License, project.Repository).Scan(&project.ID)
 	projectsCache.Delete(project.ID)
 	return err
 }
