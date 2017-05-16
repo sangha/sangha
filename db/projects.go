@@ -72,7 +72,7 @@ func (project *Project) Update(context *APIContext) error {
 
 // Save a project to the database
 func (project *Project) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO projects (name, about, website, license, repository) VALUES ($1, $2) RETURNING id",
+	err := context.QueryRow("INSERT INTO projects (name, about, website, license, repository) VALUES ($1, $2, $3, $4, $5) RETURNING id",
 		project.Name, project.About, project.Website, project.License, project.Repository).Scan(&project.ID)
 	projectsCache.Delete(project.ID)
 	return err

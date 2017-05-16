@@ -16,7 +16,7 @@ func (r *ProjectResource) GetAuthRequired() bool {
 
 // GetByIDsAuthRequired returns true because all requests need authentication
 func (r *ProjectResource) GetByIDsAuthRequired() bool {
-	return true
+	return false
 }
 
 // GetDoc returns the description of this API endpoint
