@@ -47,7 +47,7 @@ func GetDatabase() *sql.DB {
 				  email       	text		NOT NULL,
 				  nickname    	text      	NOT NULL,
 				  password		text		NOT NULL,
-				  about       	text,
+				  about       	text		DEFAULT '',
 				  activated   	bool		DEFAULT false,
 				  authtoken   	text[]     	NOT NULL,
 				  CONSTRAINT  	uk_email 	UNIQUE (email)
@@ -57,9 +57,9 @@ func GetDatabase() *sql.DB {
 				  id          	bigserial 	PRIMARY KEY,
 				  name       	text      	NOT NULL,
 				  about			text      	NOT NULL,
-				  website      	text,
-				  license      	text,
-				  repository	text,
+				  website      	text		DEFAULT '',
+				  license      	text		DEFAULT '',
+				  repository	text		DEFAULT '',
 				  activated   	bool		DEFAULT false
 				)`,
 		}
