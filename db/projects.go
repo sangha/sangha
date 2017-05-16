@@ -18,7 +18,8 @@ func (context *APIContext) LoadProjectByID(id int64) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, name, about, website, license, repository, activated FROM projects WHERE id = $1", id).Scan(&project.ID, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Activated)
+	err := context.QueryRow("SELECT id, name, about, website, license, repository, activated FROM projects WHERE id = $1", id).
+		Scan(&project.ID, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Activated)
 	return project, err
 }
 
