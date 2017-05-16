@@ -19,6 +19,7 @@ var (
 	pgConn config.PostgreSQLConnection
 
 	projectsCache = cache2go.Cache("project")
+	budgetsCache  = cache2go.Cache("budget")
 	usersCache    = cache2go.Cache("user")
 
 	// ErrInvalidID is the error returned when encountering an invalid database ID
@@ -62,6 +63,13 @@ func GetDatabase() *sql.DB {
 				  repository	text		DEFAULT '',
 				  activated   	bool		DEFAULT false
 				)`,
+			`CREATE TABLE IF NOT EXISTS budgets
+				(
+				  id          	bigserial 	PRIMARY KEY,
+				  project_id    bigserial   NOT NULL,
+				  name       	text      	NOT NULL,
+				  CONSTRAINT    fk_project  FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				)`,
 		}
 
 		// FIXME: add IF NOT EXISTS to CREATE INDEX statements (coming in v9.5)
@@ -70,6 +78,8 @@ func GetDatabase() *sql.DB {
 			`CREATE INDEX idx_users_email ON users(email)`,
 			`CREATE INDEX idx_users_authtoken ON users(authtoken)`,
 			`CREATE INDEX idx_projects_name ON projects(name)`,
+			`CREATE INDEX idx_budgets_name ON budgets(name)`,
+			`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,
 		}
 
 		for _, v := range tables {
@@ -97,6 +107,7 @@ func WipeDatabase() {
 
 	/*
 		drops := []string{
+			`DROP TABLE budgets`,
 			`DROP TABLE projects`,
 			`DROP TABLE users`,
 		}
@@ -172,6 +183,29 @@ func initCaches() {
 				}
 
 				entry := cache2go.NewCacheItem(key, 10*time.Minute, &project)
+				return entry
+			}
+		}
+		fmt.Println("Got no APIContext passed in")
+		return nil
+	})
+
+	budgetsCache.SetAddedItemCallback(func(item *cache2go.CacheItem) {
+		// fmt.Println("Now in budgets-cache:", item.Key().(string), item.Data().(*DbProject).Name)
+	})
+	budgetsCache.SetAboutToDeleteItemCallback(func(item *cache2go.CacheItem) {
+		// fmt.Println("Deleting from budgets-cache:", item.Key().(string), item.Data().(*DbProject).Name, item.CreatedOn())
+	})
+	budgetsCache.SetDataLoader(func(key interface{}, args ...interface{}) *cache2go.CacheItem {
+		if len(args) == 1 {
+			if context, ok := args[0].(*APIContext); ok {
+				budget, err := context.LoadBudgetByID(key.(int64))
+				if err != nil {
+					fmt.Println("budgetsCache ERROR for key", key, ":", err)
+					return nil
+				}
+
+				entry := cache2go.NewCacheItem(key, 10*time.Minute, &budget)
 				return entry
 			}
 		}

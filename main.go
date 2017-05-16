@@ -10,6 +10,7 @@ import (
 	"gitlab.techcultivation.org/techcultivation/sangha/db"
 
 	//	"gitlab.techcultivation.org/techcultivation/sangha/resources/sessions"
+	"gitlab.techcultivation.org/techcultivation/sangha/resources/budgets"
 	"gitlab.techcultivation.org/techcultivation/sangha/resources/projects"
 	"gitlab.techcultivation.org/techcultivation/sangha/resources/users"
 
@@ -85,6 +86,7 @@ func main() {
 		//		&sessions.SessionResource{},
 		&users.UserResource{},
 		&projects.ProjectResource{},
+		&budgets.BudgetResource{},
 	)
 
 	if config.Settings.API.SwaggerFilePath != "" {
