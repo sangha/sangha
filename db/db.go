@@ -20,6 +20,7 @@ var (
 
 	projectsCache = cache2go.Cache("project")
 	budgetsCache  = cache2go.Cache("budget")
+	codesCache    = cache2go.Cache("code")
 	usersCache    = cache2go.Cache("user")
 
 	// ErrInvalidID is the error returned when encountering an invalid database ID
@@ -70,6 +71,15 @@ func GetDatabase() *sql.DB {
 				  name       	text      	NOT NULL,
 				  CONSTRAINT    fk_project  FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
+			`CREATE TABLE IF NOT EXISTS codes
+				(
+				  id          	bigserial 		PRIMARY KEY,
+				  code       	text      		NOT NULL,
+				  budget_ids   	int[]			NOT NULL,
+				  ratios		int[]			NOT NULL,
+				  CONSTRAINT    uk_code  		UNIQUE (code),
+				  CONSTRAINT    uk_budget_ids	UNIQUE (budget_ids, ratios)
+				)`,
 		}
 
 		// FIXME: add IF NOT EXISTS to CREATE INDEX statements (coming in v9.5)
@@ -80,6 +90,7 @@ func GetDatabase() *sql.DB {
 			`CREATE INDEX idx_projects_name ON projects(name)`,
 			`CREATE INDEX idx_budgets_name ON budgets(name)`,
 			`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,
+			`CREATE INDEX idx_codes_code ON codes(code)`,
 		}
 
 		for _, v := range tables {
@@ -107,6 +118,7 @@ func WipeDatabase() {
 
 	/*
 		drops := []string{
+			`DROP TABLE codes`,
 			`DROP TABLE budgets`,
 			`DROP TABLE projects`,
 			`DROP TABLE users`,
@@ -206,6 +218,29 @@ func initCaches() {
 				}
 
 				entry := cache2go.NewCacheItem(key, 10*time.Minute, &budget)
+				return entry
+			}
+		}
+		fmt.Println("Got no APIContext passed in")
+		return nil
+	})
+
+	codesCache.SetAddedItemCallback(func(item *cache2go.CacheItem) {
+		// fmt.Println("Now in codes-cache:", item.Key().(string), item.Data().(*DbProject).Name)
+	})
+	codesCache.SetAboutToDeleteItemCallback(func(item *cache2go.CacheItem) {
+		// fmt.Println("Deleting from codes-cache:", item.Key().(string), item.Data().(*DbProject).Name, item.CreatedOn())
+	})
+	codesCache.SetDataLoader(func(key interface{}, args ...interface{}) *cache2go.CacheItem {
+		if len(args) == 1 {
+			if context, ok := args[0].(*APIContext); ok {
+				code, err := context.LoadCodeByID(key.(int64))
+				if err != nil {
+					fmt.Println("codesCache ERROR for key", key, ":", err)
+					return nil
+				}
+
+				entry := cache2go.NewCacheItem(key, 10*time.Minute, &code)
 				return entry
 			}
 		}

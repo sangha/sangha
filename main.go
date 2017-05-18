@@ -11,6 +11,7 @@ import (
 
 	//	"gitlab.techcultivation.org/techcultivation/sangha/resources/sessions"
 	"gitlab.techcultivation.org/techcultivation/sangha/resources/budgets"
+	"gitlab.techcultivation.org/techcultivation/sangha/resources/codes"
 	"gitlab.techcultivation.org/techcultivation/sangha/resources/projects"
 	"gitlab.techcultivation.org/techcultivation/sangha/resources/users"
 
@@ -83,10 +84,11 @@ func main() {
 			r.Register(wsContainer, smolderConfig, context)
 		}
 	}(
-		//		&sessions.SessionResource{},
+		// &sessions.SessionResource{},
 		&users.UserResource{},
 		&projects.ProjectResource{},
 		&budgets.BudgetResource{},
+		&codes.CodeResource{},
 	)
 
 	if config.Settings.API.SwaggerFilePath != "" {
