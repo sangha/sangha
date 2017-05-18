@@ -14,6 +14,7 @@ var (
 	_ smolder.GetIDSupported = &BudgetResource{}
 	_ smolder.GetSupported   = &BudgetResource{}
 	_ smolder.PostSupported  = &BudgetResource{}
+	_ smolder.PutSupported   = &BudgetResource{}
 )
 
 // Register this resource with the container to setup all the routes
