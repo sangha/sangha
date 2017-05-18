@@ -1,5 +1,11 @@
 package db
 
+import (
+	"math/rand"
+	"strconv"
+	"time"
+)
+
 // Budget represents the db schema of a budget
 type Budget struct {
 	ID        int64
@@ -72,4 +78,29 @@ func (budget *Budget) Save(context *APIContext) error {
 		budget.ProjectID, budget.Name).Scan(&budget.ID)
 	budgetsCache.Delete(budget.ID)
 	return err
+}
+
+type BudgetRatioPair struct {
+	budget_ids []string
+	ratios     []string
+}
+type BudgetSorter BudgetRatioPair
+
+func (a BudgetSorter) Len() int {
+	return len(a.budget_ids)
+}
+
+func (a BudgetSorter) Swap(i, j int) {
+	a.budget_ids[i], a.budget_ids[j] = a.budget_ids[j], a.budget_ids[i]
+	a.ratios[i], a.ratios[j] = a.ratios[j], a.ratios[i]
+}
+
+func (a BudgetSorter) Less(i, j int) bool {
+	in, _ := strconv.Atoi(a.budget_ids[i])
+	jn, _ := strconv.Atoi(a.budget_ids[j])
+	return in < jn
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
