@@ -6,7 +6,7 @@ import (
 	"time"
 
 	restful "github.com/emicklei/go-restful"
-	"gitlab.techcultivation.org/techcultivation/sangha/config"
+	"gitlab.techcultivation.org/sangha/sangha/config"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/muesli/smolder"

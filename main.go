@@ -6,14 +6,14 @@ import (
 	"os"
 	"os/signal"
 
-	"gitlab.techcultivation.org/techcultivation/sangha/config"
-	"gitlab.techcultivation.org/techcultivation/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/config"
+	"gitlab.techcultivation.org/sangha/sangha/db"
 
-	//	"gitlab.techcultivation.org/techcultivation/sangha/resources/sessions"
-	"gitlab.techcultivation.org/techcultivation/sangha/resources/budgets"
-	"gitlab.techcultivation.org/techcultivation/sangha/resources/codes"
-	"gitlab.techcultivation.org/techcultivation/sangha/resources/projects"
-	"gitlab.techcultivation.org/techcultivation/sangha/resources/users"
+	//	"gitlab.techcultivation.org/sangha/sangha/resources/sessions"
+	"gitlab.techcultivation.org/sangha/sangha/resources/budgets"
+	"gitlab.techcultivation.org/sangha/sangha/resources/codes"
+	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
+	"gitlab.techcultivation.org/sangha/sangha/resources/users"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/emicklei/go-restful-swagger12"

@@ -1,7 +1,7 @@
 package codes
 
 import (
-	"gitlab.techcultivation.org/techcultivation/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/muesli/smolder"
 )

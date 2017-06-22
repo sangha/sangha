@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"gitlab.techcultivation.org/techcultivation/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
