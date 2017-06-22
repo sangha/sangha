@@ -24,7 +24,7 @@ func (r *BudgetResource) PostAuthRequired() bool {
 
 // PostDoc returns the description of this API endpoint
 func (r *BudgetResource) PostDoc() string {
-	return "create a new budget invitation"
+	return "create a new budget"
 }
 
 // PostParams returns the parameters supported by this API endpoint

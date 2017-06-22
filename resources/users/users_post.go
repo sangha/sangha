@@ -25,7 +25,7 @@ func (r *UserResource) PostAuthRequired() bool {
 
 // PostDoc returns the description of this API endpoint
 func (r *UserResource) PostDoc() string {
-	return "create a new user invitation"
+	return "create a new user"
 }
 
 // PostParams returns the parameters supported by this API endpoint
