@@ -43,7 +43,7 @@ func (context *APIContext) GetUserByID(id int64) (User, error) {
 func (context *APIContext) GetUserByNameAndPassword(name, password string) (User, error) {
 	user := User{}
 	hashedPassword := ""
-	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken, password FROM users WHERE username = $1", name).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken, &hashedPassword)
+	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken, password FROM users WHERE nickname = $1", name).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken, &hashedPassword)
 	if err != nil {
 		return User{}, errors.New("Invalid username or password")
 	}
@@ -69,7 +69,7 @@ func (context *APIContext) GetUserByAccessToken(token string) (interface{}, erro
 func (context *APIContext) LoadAllUsers() ([]User, error) {
 	users := []User{}
 
-	rows, err := context.Query("SELECT id, username, about, email, activated FROM users")
+	rows, err := context.Query("SELECT id, nickname, about, email, activated FROM users")
 	if err != nil {
 		return users, err
 	}
