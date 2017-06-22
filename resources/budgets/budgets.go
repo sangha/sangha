@@ -29,3 +29,13 @@ func (r *BudgetResource) Register(container *restful.Container, config smolder.A
 
 	r.Init(container, r)
 }
+
+// Reads returns the model that will be read by POST, PUT & PATCH operations
+func (r *BudgetResource) Reads() interface{} {
+	return BudgetPostStruct{}
+}
+
+// Returns returns the model that will be returned
+func (r *BudgetResource) Returns() interface{} {
+	return BudgetResponse{}
+}
