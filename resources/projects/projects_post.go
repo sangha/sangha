@@ -27,7 +27,7 @@ func (r *ProjectResource) PostAuthRequired() bool {
 
 // PostDoc returns the description of this API endpoint
 func (r *ProjectResource) PostDoc() string {
-	return "create a new project invitation"
+	return "create a new project"
 }
 
 // PostParams returns the parameters supported by this API endpoint
