@@ -12,7 +12,7 @@ import (
 
 // GetAuthRequired returns true because all requests need authentication
 func (r *UserResource) GetAuthRequired() bool {
-	return false
+	return true
 }
 
 // GetByIDsAuthRequired returns true because all requests need authentication

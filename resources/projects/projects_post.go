@@ -22,7 +22,7 @@ type ProjectPostStruct struct {
 
 // PostAuthRequired returns true because all requests need authentication
 func (r *ProjectResource) PostAuthRequired() bool {
-	return false
+	return true
 }
 
 // PostDoc returns the description of this API endpoint

@@ -11,12 +11,12 @@ import (
 
 // GetAuthRequired returns true because all requests need authentication
 func (r *BudgetResource) GetAuthRequired() bool {
-	return false
+	return true
 }
 
 // GetByIDsAuthRequired returns true because all requests need authentication
 func (r *BudgetResource) GetByIDsAuthRequired() bool {
-	return false
+	return true
 }
 
 // GetDoc returns the description of this API endpoint

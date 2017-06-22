@@ -17,7 +17,7 @@ type BudgetPutStruct struct {
 
 // PutAuthRequired returns true because all requests need authentication
 func (r *BudgetResource) PutAuthRequired() bool {
-	return false
+	return true
 }
 
 // PutDoc returns the description of this API endpoint

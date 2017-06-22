@@ -19,7 +19,7 @@ type BudgetPostStruct struct {
 
 // PostAuthRequired returns true because all requests need authentication
 func (r *BudgetResource) PostAuthRequired() bool {
-	return false
+	return true
 }
 
 // PostDoc returns the description of this API endpoint
