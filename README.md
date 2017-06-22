@@ -11,6 +11,13 @@ go get -u
 go build
 ```
 
+### Configure
+
+```
+cp config.example.json config.json
+vim config.json
+```
+
 ### Run sangha
 
 ```
@@ -19,4 +26,4 @@ go build
 
 ### Reference
 
-Visit Swagger: http://localhost:9991/apidocs/
+Visit the API docs: http://localhost:9991/apidocs/
