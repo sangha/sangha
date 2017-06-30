@@ -1,0 +1,13 @@
+[Unit]
+Description=sangha daemon
+After=network.target
+
+[Service]
+ExecStart=$GOPATH/bin/sangha
+User=sangha
+Group=users
+RestartSec=5
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
