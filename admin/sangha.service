@@ -3,11 +3,12 @@ Description=sangha daemon
 After=network.target
 
 [Service]
-ExecStart=$GOPATH/bin/sangha
+ExecStart=/home/sangha/go/bin/sangha
 User=sangha
 Group=users
 RestartSec=5
 Restart=on-failure
+WorkingDirectory=/home/sangha
 
 [Install]
 WantedBy=multi-user.target
