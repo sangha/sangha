@@ -44,7 +44,7 @@ func (context *APIContext) LoadCodeByID(id int64) (Code, error) {
 	return code, err
 }
 
-func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSlice) (Code, error) {
+func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSlice, userID int) (Code, error) {
 	code := Code{}
 	if len(budgetIDs) != len(ratios) {
 		return code, ErrInvalidBudgetRatioSet
@@ -89,11 +89,21 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 		}
 	}
 
-	err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2", budgetIDs, ratios).
-		Scan(&code.ID, &code.Code)
+	if userID > 0 {
+		err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = $3", budgetIDs, ratios, userID).
+			Scan(&code.ID, &code.Code)
+	} else {
+		err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = null", budgetIDs, ratios).
+			Scan(&code.ID, &code.Code)
+	}
 	if err != nil {
-		err = context.QueryRow("INSERT INTO codes (code, budget_ids, ratios) VALUES ($1, $2, $3) RETURNING id",
-			code.Code, budgetIDs, ratios).Scan(&code.ID)
+		if userID > 0 {
+			err = context.QueryRow("INSERT INTO codes (code, budget_ids, ratios, user_id) VALUES ($1, $2, $3, $4) RETURNING id",
+				code.Code, budgetIDs, ratios, userID).Scan(&code.ID)
+		} else {
+			err = context.QueryRow("INSERT INTO codes (code, budget_ids, ratios, user_id) VALUES ($1, $2, $3, null) RETURNING id",
+				code.Code, budgetIDs, ratios).Scan(&code.ID)
+		}
 		codesCache.Delete(code.ID)
 	}
 

@@ -77,8 +77,10 @@ func GetDatabase() *sql.DB {
 				  code       	text      		NOT NULL,
 				  budget_ids   	int[]			NOT NULL,
 				  ratios		int[]			NOT NULL,
+				  user_id   	int,
 				  CONSTRAINT    uk_code  		UNIQUE (code),
-				  CONSTRAINT    uk_budget_ids	UNIQUE (budget_ids, ratios)
+				  CONSTRAINT    uk_budget_ids	UNIQUE (budget_ids, ratios, user_id),
+				  CONSTRAINT    fk_user			FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
 		}
 

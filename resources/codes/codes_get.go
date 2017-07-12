@@ -29,6 +29,7 @@ func (r *CodeResource) GetDoc() string {
 func (r *CodeResource) GetParams() []*restful.Parameter {
 	params := []*restful.Parameter{}
 	params = append(params, restful.QueryParameter("name", "name of a code").DataType("string"))
+	params = append(params, restful.QueryParameter("user_id", "ID of a user").DataType("int"))
 	params = append(params, restful.QueryParameter("budget_ids[]", "an array of budget IDs").DataType("int"))
 	params = append(params, restful.QueryParameter("ratios[]", "an array of ratios").DataType("int"))
 
@@ -63,13 +64,18 @@ func (r *CodeResource) Get(context smolder.APIContext, request *restful.Request,
 	resp := CodeResponse{}
 	resp.Init(context)
 
+	userID := params["user_id"]
 	budgetIDs := params["budget_ids[]"]
 	ratios := params["ratios[]"]
 	if len(budgetIDs) > 0 && len(ratios) > 0 {
 		fmt.Println(budgetIDs)
 		fmt.Println(ratios)
 
-		code, err := context.(*db.APIContext).LoadCodeByBudgetsAndRatios(budgetIDs, ratios)
+		var uid int64
+		if len(userID) > 0 {
+			uid, _ = strconv.ParseInt(userID[0], 10, 0)
+		}
+		code, err := context.(*db.APIContext).LoadCodeByBudgetsAndRatios(budgetIDs, ratios, int(uid))
 		if err != nil {
 			r.NotFound(request, response)
 			return
