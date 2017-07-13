@@ -93,7 +93,7 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 		err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = $3", budgetIDs, ratios, userID).
 			Scan(&code.ID, &code.Code)
 	} else {
-		err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = null", budgetIDs, ratios).
+		err = context.QueryRow("SELECT id, code FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id IS NULL", budgetIDs, ratios).
 			Scan(&code.ID, &code.Code)
 	}
 	if err != nil {
