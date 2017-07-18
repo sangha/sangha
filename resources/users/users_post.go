@@ -5,6 +5,7 @@ import (
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
+	"github.com/badoux/checkmail"
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
 )
@@ -20,7 +21,7 @@ type UserPostStruct struct {
 
 // PostAuthRequired returns true because all requests need authentication
 func (r *UserResource) PostAuthRequired() bool {
-	return true
+	return false
 }
 
 // PostDoc returns the description of this API endpoint
@@ -35,18 +36,18 @@ func (r *UserResource) PostParams() []*restful.Parameter {
 
 // Post processes an incoming POST (create) request
 func (r *UserResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
-	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.User).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusUnauthorized,
-			false,
-			"Admin permission required for this operation",
-			"UserResource POST"))
-		return
-	}
+	/*	auth, err := context.Authentication(request)
+		if err != nil || auth.(db.User).ID != 1 {
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusUnauthorized,
+				false,
+				"Admin permission required for this operation",
+				"UserResource POST"))
+			return
+		} */
 
 	ups := UserPostStruct{}
-	err = request.ReadEntity(&ups)
+	err := request.ReadEntity(&ups)
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusBadRequest,
@@ -56,8 +57,21 @@ func (r *UserResource) Post(context smolder.APIContext, request *restful.Request
 		return
 	}
 
+	err = checkmail.ValidateFormat(ups.User.Email)
+	if err != nil {
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			true,
+			"Invalid email address",
+			"UserResource POST"))
+		return
+	}
+
 	if ups.User.About == "" {
 		ups.User.About = ups.User.Email
+	}
+	if ups.User.Nickname == "" {
+		ups.User.Nickname = ups.User.Email
 	}
 
 	user := db.User{
