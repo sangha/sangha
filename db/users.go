@@ -54,7 +54,18 @@ func (context *APIContext) GetUserByNameAndPassword(name, password string) (User
 		return User{}, errors.New("Invalid username or password")
 	}
 
-	return user, err
+	return user, nil
+}
+
+// GetUserByEmail loads a user by email from the database
+func (context *APIContext) GetUserByEmail(email string) (User, error) {
+	user := User{}
+	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken FROM users WHERE email = $1", email).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken)
+	if err != nil {
+		return User{}, errors.New("Invalid email address")
+	}
+
+	return user, nil
 }
 
 // GetUserByAccessToken loads a user by accesstoken from the database
