@@ -31,20 +31,11 @@ func (r *BudgetResource) PutParams() []*restful.Parameter {
 }
 
 // Put processes an incoming PUT (update) request
-func (r *BudgetResource) Put(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	resp := BudgetResponse{}
 	resp.Init(context)
 
-	pps := BudgetPutStruct{}
-	err := request.ReadEntity(&pps)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Can't parse PUT data",
-			"BudgetResource PUT"))
-		return
-	}
+	pps := data.(BudgetPutStruct)
 
 	id, err := strconv.Atoi(request.PathParameter("budget-id"))
 	if err != nil {

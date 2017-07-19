@@ -1,6 +1,9 @@
 package budgets
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
 )
@@ -38,4 +41,15 @@ func (r *BudgetResource) Reads() interface{} {
 // Returns returns the model that will be returned
 func (r *BudgetResource) Returns() interface{} {
 	return BudgetResponse{}
+}
+
+// Validate checks an incoming request for data errors
+func (r *BudgetResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
+	ups := data.(BudgetPostStruct)
+
+	if strings.TrimSpace(ups.Budget.Name) == "" {
+		return errors.New("Invalid budget name")
+	}
+
+	return nil
 }

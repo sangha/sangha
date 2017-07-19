@@ -5,7 +5,6 @@ import (
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
-	"github.com/badoux/checkmail"
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
 )
@@ -35,7 +34,7 @@ func (r *UserResource) PostParams() []*restful.Parameter {
 }
 
 // Post processes an incoming POST (create) request
-func (r *UserResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *UserResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	/*	auth, err := context.Authentication(request)
 		if err != nil || auth.(db.User).ID != 1 {
 			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
@@ -46,23 +45,13 @@ func (r *UserResource) Post(context smolder.APIContext, request *restful.Request
 			return
 		} */
 
-	ups := UserPostStruct{}
-	err := request.ReadEntity(&ups)
-	if err != nil {
+	ups := data.(UserPostStruct)
+	_, err := context.(*db.APIContext).GetUserByEmail(ups.User.Email)
+	if err == nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusBadRequest,
 			false,
-			"Can't parse POST data",
-			"UserResource POST"))
-		return
-	}
-
-	err = checkmail.ValidateFormat(ups.User.Email)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			true,
-			"Invalid email address",
+			"A user with this email address already exists",
 			"UserResource POST"))
 		return
 	}

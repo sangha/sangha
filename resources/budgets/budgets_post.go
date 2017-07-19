@@ -33,7 +33,7 @@ func (r *BudgetResource) PostParams() []*restful.Parameter {
 }
 
 // Post processes an incoming POST (create) request
-func (r *BudgetResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	/*auth, err := context.Authentication(request)
 		if err != nil || auth.(db.Budget).ID != 1 {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
@@ -44,22 +44,13 @@ func (r *BudgetResource) Post(context smolder.APIContext, request *restful.Reque
 		return
 	}*/
 
-	ups := BudgetPostStruct{}
-	err := request.ReadEntity(&ups)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Can't parse POST data",
-			"BudgetResource POST"))
-		return
-	}
+	ups := data.(BudgetPostStruct)
 
 	budget := db.Budget{
 		ProjectID: ups.Budget.ProjectID,
 		Name:      ups.Budget.Name,
 	}
-	err = budget.Save(context.(*db.APIContext))
+	err := budget.Save(context.(*db.APIContext))
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,

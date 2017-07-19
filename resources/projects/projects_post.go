@@ -36,7 +36,7 @@ func (r *ProjectResource) PostParams() []*restful.Parameter {
 }
 
 // Post processes an incoming POST (create) request
-func (r *ProjectResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	/*auth, err := context.Authentication(request)
 		if err != nil || auth.(db.Project).ID != 1 {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
@@ -47,17 +47,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, request *restful.Requ
 		return
 	}*/
 
-	ups := ProjectPostStruct{}
-	err := request.ReadEntity(&ups)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Can't parse POST data",
-			"ProjectResource POST"))
-		return
-	}
-
+	ups := data.(ProjectPostStruct)
 	project := db.Project{
 		Name:       ups.Project.Name,
 		About:      ups.Project.About,
@@ -65,7 +55,8 @@ func (r *ProjectResource) Post(context smolder.APIContext, request *restful.Requ
 		License:    ups.Project.License,
 		Repository: ups.Project.Repository,
 	}
-	err = project.Save(context.(*db.APIContext))
+
+	err := project.Save(context.(*db.APIContext))
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,

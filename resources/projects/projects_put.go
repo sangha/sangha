@@ -31,20 +31,11 @@ func (r *ProjectResource) PutParams() []*restful.Parameter {
 }
 
 // Put processes an incoming PUT (update) request
-func (r *ProjectResource) Put(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	resp := ProjectResponse{}
 	resp.Init(context)
 
-	pps := ProjectPutStruct{}
-	err := request.ReadEntity(&pps)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Can't parse PUT data",
-			"ProjectResource PUT"))
-		return
-	}
+	pps := data.(ProjectPutStruct)
 
 	id, err := strconv.Atoi(request.PathParameter("project-id"))
 	if err != nil {
