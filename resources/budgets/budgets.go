@@ -35,7 +35,7 @@ func (r *BudgetResource) Register(container *restful.Container, config smolder.A
 
 // Reads returns the model that will be read by POST, PUT & PATCH operations
 func (r *BudgetResource) Reads() interface{} {
-	return BudgetPostStruct{}
+	return &BudgetPostStruct{}
 }
 
 // Returns returns the model that will be returned
@@ -45,7 +45,7 @@ func (r *BudgetResource) Returns() interface{} {
 
 // Validate checks an incoming request for data errors
 func (r *BudgetResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
-	ups := data.(BudgetPostStruct)
+	ups := data.(*BudgetPostStruct)
 
 	if strings.TrimSpace(ups.Budget.Name) == "" {
 		return errors.New("Invalid budget name")

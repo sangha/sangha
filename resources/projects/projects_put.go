@@ -35,7 +35,7 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 	resp := ProjectResponse{}
 	resp.Init(context)
 
-	pps := data.(ProjectPutStruct)
+	pps := data.(*ProjectPutStruct)
 
 	id, err := strconv.Atoi(request.PathParameter("project-id"))
 	if err != nil {

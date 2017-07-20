@@ -34,7 +34,7 @@ func (r *UserResource) Register(container *restful.Container, config smolder.API
 
 // Reads returns the model that will be read by POST, PUT & PATCH operations
 func (r *UserResource) Reads() interface{} {
-	return UserPostStruct{}
+	return &UserPostStruct{}
 }
 
 // Returns returns the model that will be returned
@@ -44,7 +44,7 @@ func (r *UserResource) Returns() interface{} {
 
 // Validate checks an incoming request for data errors
 func (r *UserResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
-	ups := data.(UserPostStruct)
+	ups := data.(*UserPostStruct)
 
 	err := checkmail.ValidateFormat(ups.User.Email)
 	if err != nil {

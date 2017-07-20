@@ -35,7 +35,7 @@ func (r *ProjectResource) Register(container *restful.Container, config smolder.
 
 // Reads returns the model that will be read by POST, PUT & PATCH operations
 func (r *ProjectResource) Reads() interface{} {
-	return ProjectPostStruct{}
+	return &ProjectPostStruct{}
 }
 
 // Returns returns the model that will be returned
@@ -45,7 +45,7 @@ func (r *ProjectResource) Returns() interface{} {
 
 // Validate checks an incoming request for data errors
 func (r *ProjectResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
-	ups := data.(ProjectPostStruct)
+	ups := data.(*ProjectPostStruct)
 
 	if strings.TrimSpace(ups.Project.Name) == "" {
 		return errors.New("Invalid project name")

@@ -45,7 +45,7 @@ func (r *UserResource) Post(context smolder.APIContext, data interface{}, reques
 			return
 		} */
 
-	ups := data.(UserPostStruct)
+	ups := data.(*UserPostStruct)
 	_, err := context.(*db.APIContext).GetUserByEmail(ups.User.Email)
 	if err == nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(

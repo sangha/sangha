@@ -35,7 +35,7 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 	resp := BudgetResponse{}
 	resp.Init(context)
 
-	pps := data.(BudgetPutStruct)
+	pps := data.(*BudgetPutStruct)
 
 	id, err := strconv.Atoi(request.PathParameter("budget-id"))
 	if err != nil {

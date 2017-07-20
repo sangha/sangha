@@ -47,7 +47,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		return
 	}*/
 
-	ups := data.(ProjectPostStruct)
+	ups := data.(*ProjectPostStruct)
 	project := db.Project{
 		Name:       ups.Project.Name,
 		About:      ups.Project.About,
