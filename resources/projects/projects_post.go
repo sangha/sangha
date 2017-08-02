@@ -12,6 +12,7 @@ import (
 // ProjectPostStruct holds all values of an incoming POST request
 type ProjectPostStruct struct {
 	Project struct {
+		Slug       string `json:"slug"`
 		Name       string `json:"name"`
 		About      string `json:"about"`
 		Website    string `json:"website"`
@@ -48,7 +49,18 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	}*/
 
 	ups := data.(*ProjectPostStruct)
+	_, err := context.(*db.APIContext).LoadProjectBySlug(ups.Project.Slug)
+	if err == nil {
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			false,
+			"A project with this slug address already exists",
+			"ProjectResource POST"))
+		return
+	}
+
 	project := db.Project{
+		Slug:       ups.Project.Slug,
 		Name:       ups.Project.Name,
 		About:      ups.Project.About,
 		Website:    ups.Project.Website,
@@ -56,7 +68,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		Repository: ups.Project.Repository,
 	}
 
-	err := project.Save(context.(*db.APIContext))
+	err = project.Save(context.(*db.APIContext))
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,

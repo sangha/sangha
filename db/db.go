@@ -57,13 +57,16 @@ func GetDatabase() *sql.DB {
 				)`,
 			`CREATE TABLE IF NOT EXISTS projects
 				(
-				  id          	bigserial 	PRIMARY KEY,
-				  name       	text      	NOT NULL,
-				  about			text      	NOT NULL,
-				  website      	text		DEFAULT '',
-				  license      	text		DEFAULT '',
-				  repository	text		DEFAULT '',
-				  activated   	bool		DEFAULT false
+				  id          	bigserial 		PRIMARY KEY,
+				  slug			text			NOT NULL,
+				  name       	text      		NOT NULL,
+				  about			text      		NOT NULL,
+				  website      	text			DEFAULT '',
+				  license      	text			DEFAULT '',
+				  repository	text			DEFAULT '',
+				  activated   	bool			DEFAULT false,
+				  CONSTRAINT  	uk_slug 		UNIQUE (slug),
+				  CONSTRAINT  	uk_repository	UNIQUE (repository)
 				)`,
 			`CREATE TABLE IF NOT EXISTS budgets
 				(
@@ -90,6 +93,7 @@ func GetDatabase() *sql.DB {
 		indexes := []string{
 			`CREATE INDEX idx_users_email ON users(email)`,
 			`CREATE INDEX idx_users_authtoken ON users(authtoken)`,
+			`CREATE INDEX idx_projects_slug ON projects(slug)`,
 			`CREATE INDEX idx_projects_name ON projects(name)`,
 			`CREATE INDEX idx_budgets_name ON budgets(name)`,
 			`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,

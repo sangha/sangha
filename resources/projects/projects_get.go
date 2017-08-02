@@ -27,6 +27,7 @@ func (r *ProjectResource) GetDoc() string {
 // GetParams returns the parameters supported by this API endpoint
 func (r *ProjectResource) GetParams() []*restful.Parameter {
 	params := []*restful.Parameter{}
+	params = append(params, restful.QueryParameter("slug", "slug of a project").DataType("string"))
 	params = append(params, restful.QueryParameter("name", "name of a project").DataType("string"))
 
 	return params
@@ -60,14 +61,24 @@ func (r *ProjectResource) Get(context smolder.APIContext, request *restful.Reque
 	resp := ProjectResponse{}
 	resp.Init(context)
 
-	projects, err := context.(*db.APIContext).LoadAllProjects()
-	if err != nil {
-		r.NotFound(request, response)
-		return
-	}
+	if len(params["slug"]) > 0 {
+		project, err := context.(*db.APIContext).LoadProjectBySlug(params["slug"][0])
+		if err != nil {
+			r.NotFound(request, response)
+			return
+		}
 
-	for _, project := range projects {
 		resp.AddProject(&project)
+	} else {
+		projects, err := context.(*db.APIContext).LoadAllProjects()
+		if err != nil {
+			r.NotFound(request, response)
+			return
+		}
+
+		for _, project := range projects {
+			resp.AddProject(&project)
+		}
 	}
 
 	resp.Send(response)

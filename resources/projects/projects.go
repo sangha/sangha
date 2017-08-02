@@ -50,6 +50,9 @@ func (r *ProjectResource) Validate(context smolder.APIContext, data interface{},
 	if strings.TrimSpace(ups.Project.Name) == "" {
 		return errors.New("Invalid project name")
 	}
+	if strings.TrimSpace(ups.Project.Slug) == "" {
+		return errors.New("Invalid project slug")
+	}
 
 	return nil
 }
