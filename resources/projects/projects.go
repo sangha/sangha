@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/emicklei/go-restful"
+	"github.com/gosimple/slug"
 	"github.com/muesli/smolder"
 )
 
@@ -51,7 +52,8 @@ func (r *ProjectResource) Validate(context smolder.APIContext, data interface{},
 		return errors.New("Invalid project name")
 	}
 	if strings.TrimSpace(ups.Project.Slug) == "" {
-		return errors.New("Invalid project slug")
+		ups.Project.Slug = slug.Make(ups.Project.Name)
+		// return errors.New("Invalid project slug")
 	}
 
 	return nil
