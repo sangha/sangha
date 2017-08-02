@@ -15,11 +15,12 @@ type UserResponse struct {
 }
 
 type userInfoResponse struct {
-	ID        int64  `json:"id"`
-	Email     string `json:"email"`
-	Nickname  string `json:"nickname"`
-	About     string `json:"about"`
-	Activated bool   `json:"activated"`
+	ID        int64    `json:"id"`
+	Email     string   `json:"email"`
+	Nickname  string   `json:"nickname"`
+	About     string   `json:"about"`
+	Address   []string `json:"address"`
+	Activated bool     `json:"activated"`
 }
 
 // Init a new response
@@ -54,6 +55,7 @@ func prepareUserResponse(context smolder.APIContext, user *db.User) userInfoResp
 		Email:     user.Email,
 		Nickname:  user.Nickname,
 		About:     user.About,
+		Address:   user.Address,
 		Activated: user.Activated,
 	}
 

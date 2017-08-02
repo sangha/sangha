@@ -12,6 +12,7 @@ type User struct {
 	Email     string
 	Nickname  string
 	About     string
+	Address   StringSlice
 	Activated bool
 	AuthToken StringSlice
 }
@@ -23,7 +24,8 @@ func (context *APIContext) LoadUserByID(id int64) (User, error) {
 		return user, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, nickname, about, email, activated FROM users WHERE id = $1", id).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated)
+	err := context.QueryRow("SELECT id, nickname, about, email, address, activated FROM users WHERE id = $1", id).
+		Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.Activated)
 	return user, err
 }
 
@@ -43,7 +45,8 @@ func (context *APIContext) GetUserByID(id int64) (User, error) {
 func (context *APIContext) GetUserByNameAndPassword(name, password string) (User, error) {
 	user := User{}
 	hashedPassword := ""
-	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken, password FROM users WHERE nickname = $1", name).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken, &hashedPassword)
+	err := context.QueryRow("SELECT id, nickname, about, email, address, activated, authtoken, password FROM users WHERE nickname = $1", name).
+		Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.Activated, &user.AuthToken, &hashedPassword)
 	if err != nil {
 		return User{}, errors.New("Invalid username or password")
 	}
@@ -60,7 +63,8 @@ func (context *APIContext) GetUserByNameAndPassword(name, password string) (User
 // GetUserByEmail loads a user by email from the database
 func (context *APIContext) GetUserByEmail(email string) (User, error) {
 	user := User{}
-	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken FROM users WHERE email = $1", email).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken)
+	err := context.QueryRow("SELECT id, nickname, about, email, address, activated, authtoken FROM users WHERE email = $1", email).
+		Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.Activated, &user.AuthToken)
 	if err != nil {
 		return User{}, errors.New("Invalid email address")
 	}
@@ -71,7 +75,8 @@ func (context *APIContext) GetUserByEmail(email string) (User, error) {
 // GetUserByAccessToken loads a user by accesstoken from the database
 func (context *APIContext) GetUserByAccessToken(token string) (interface{}, error) {
 	user := User{}
-	err := context.QueryRow("SELECT id, nickname, about, email, activated, authtoken FROM users WHERE $1 = ANY(authtoken)", token).Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated, &user.AuthToken)
+	err := context.QueryRow("SELECT id, nickname, about, email, address, activated, authtoken FROM users WHERE $1 = ANY(authtoken)", token).
+		Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.Activated, &user.AuthToken)
 
 	return user, err
 }
@@ -80,7 +85,7 @@ func (context *APIContext) GetUserByAccessToken(token string) (interface{}, erro
 func (context *APIContext) LoadAllUsers() ([]User, error) {
 	users := []User{}
 
-	rows, err := context.Query("SELECT id, nickname, about, email, activated FROM users")
+	rows, err := context.Query("SELECT id, nickname, about, email, address, activated FROM users")
 	if err != nil {
 		return users, err
 	}
@@ -88,7 +93,7 @@ func (context *APIContext) LoadAllUsers() ([]User, error) {
 	defer rows.Close()
 	for rows.Next() {
 		user := User{}
-		err = rows.Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Activated)
+		err = rows.Scan(&user.ID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.Activated)
 		if err != nil {
 			return users, err
 		}
@@ -101,7 +106,8 @@ func (context *APIContext) LoadAllUsers() ([]User, error) {
 
 // Update a user in the database
 func (user *User) Update(context *APIContext) error {
-	_, err := context.Exec("UPDATE users SET about = $1, email = $2, authtoken = $3 WHERE id = $4", user.About, user.Email, user.AuthToken, user.ID)
+	_, err := context.Exec("UPDATE users SET about = $1, email = $2, address = $3, authtoken = $4 WHERE id = $5",
+		user.About, user.Email, user.Address, user.AuthToken, user.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -131,7 +137,8 @@ func (user *User) Save(context *APIContext) error {
 	}
 
 	user.AuthToken = StringSlice{uuid}
-	err = context.QueryRow("INSERT INTO users (nickname, password, about, email, authtoken) VALUES ($5, $4, $2, $1, $3) RETURNING id", user.Email, user.About, user.AuthToken, uuid, user.Nickname).Scan(&user.ID)
+	err = context.QueryRow("INSERT INTO users (nickname, password, about, address, email, authtoken) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+		user.Nickname, uuid, user.About, user.Address, user.Email, user.AuthToken).Scan(&user.ID)
 	usersCache.Delete(user.ID)
 	return err
 }

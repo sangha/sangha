@@ -12,9 +12,10 @@ import (
 // UserPostStruct holds all values of an incoming POST request
 type UserPostStruct struct {
 	User struct {
-		Email    string `json:"email"`
-		Nickname string `json:"nickname"`
-		About    string `json:"about"`
+		Email    string   `json:"email"`
+		Nickname string   `json:"nickname"`
+		About    string   `json:"about"`
+		Address  []string `json:"address"`
 	} `json:"user"`
 }
 
@@ -67,6 +68,7 @@ func (r *UserResource) Post(context smolder.APIContext, data interface{}, reques
 		Nickname: ups.User.Nickname,
 		Email:    ups.User.Email,
 		About:    ups.User.About,
+		Address:  ups.User.Address,
 	}
 	err = user.Save(context.(*db.APIContext))
 	if err != nil {
