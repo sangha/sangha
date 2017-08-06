@@ -26,6 +26,10 @@ func (context *APIContext) StoreImage(logo []byte) (string, error) {
 }
 
 func (context *APIContext) BuildImageURL(id string) string {
+	if id == "" {
+		return ""
+	}
+
 	u, _ := url.Parse(context.Config.Web.BaseURL)
 	u.Path = path.Join(u.Path, "images", id)
 	return u.String()
