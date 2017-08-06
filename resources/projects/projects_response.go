@@ -22,6 +22,7 @@ type projectInfoResponse struct {
 	Website    string `json:"website"`
 	License    string `json:"license"`
 	Repository string `json:"repository"`
+	Logo       string `json:"logo"`
 	Activated  bool   `json:"activated"`
 }
 
@@ -60,6 +61,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 		Website:    project.Website,
 		License:    project.License,
 		Repository: project.Repository,
+		Logo:       context.(*db.APIContext).BuildImageURL(project.Logo),
 		Activated:  project.Activated,
 	}
 

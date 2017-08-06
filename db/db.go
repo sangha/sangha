@@ -64,6 +64,7 @@ func GetDatabase() *sql.DB {
 				  website      	text			DEFAULT '',
 				  license      	text			DEFAULT '',
 				  repository	text			DEFAULT '',
+				  logo			text			DEFAULT '',
 				  activated   	bool			DEFAULT false,
 				  CONSTRAINT  	uk_slug 		UNIQUE (slug),
 				  CONSTRAINT  	uk_repository	UNIQUE (repository)

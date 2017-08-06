@@ -9,6 +9,7 @@ type Project struct {
 	Website    string
 	License    string
 	Repository string
+	Logo       string
 	Activated  bool
 }
 
@@ -19,8 +20,8 @@ func (context *APIContext) LoadProjectByID(id int64) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, slug, name, about, website, license, repository, activated FROM projects WHERE id = $1", id).
-		Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Activated)
+	err := context.QueryRow("SELECT id, slug, name, about, website, license, repository, logo, activated FROM projects WHERE id = $1", id).
+		Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.Activated)
 	return project, err
 }
 
@@ -43,8 +44,8 @@ func (context *APIContext) LoadProjectBySlug(slug string) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, slug, name, about, website, license, repository, activated FROM projects WHERE slug = $1", slug).
-		Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Activated)
+	err := context.QueryRow("SELECT id, slug, name, about, website, license, repository, logo, activated FROM projects WHERE slug = $1", slug).
+		Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.Activated)
 	return project, err
 }
 
@@ -52,7 +53,7 @@ func (context *APIContext) LoadProjectBySlug(slug string) (Project, error) {
 func (context *APIContext) LoadAllProjects() ([]Project, error) {
 	projects := []Project{}
 
-	rows, err := context.Query("SELECT id, slug, name, about, website, license, repository, activated FROM projects")
+	rows, err := context.Query("SELECT id, slug, name, about, website, license, repository, logo, activated FROM projects")
 	if err != nil {
 		return projects, err
 	}
@@ -60,7 +61,7 @@ func (context *APIContext) LoadAllProjects() ([]Project, error) {
 	defer rows.Close()
 	for rows.Next() {
 		project := Project{}
-		err = rows.Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Activated)
+		err = rows.Scan(&project.ID, &project.Slug, &project.Name, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.Activated)
 		if err != nil {
 			return projects, err
 		}
@@ -85,8 +86,8 @@ func (project *Project) Update(context *APIContext) error {
 
 // Save a project to the database
 func (project *Project) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO projects (slug, name, about, website, license, repository) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
-		project.Slug, project.Name, project.About, project.Website, project.License, project.Repository).Scan(&project.ID)
+	err := context.QueryRow("INSERT INTO projects (slug, name, about, website, license, repository, logo) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		project.Slug, project.Name, project.About, project.Website, project.License, project.Repository, project.Logo).Scan(&project.ID)
 	projectsCache.Delete(project.ID)
 	return err
 }

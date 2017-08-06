@@ -19,6 +19,7 @@ type Data struct {
 		SwaggerAPIPath  string
 		SwaggerPath     string
 		SwaggerFilePath string
+		ImageFilePath   string
 	}
 
 	Connections struct {

@@ -6,7 +6,8 @@
 
         "SwaggerAPIPath":       "/apidocs.json",
         "SwaggerPath":          "/apidocs/",
-        "SwaggerFilePath":      "/home/muesli/Sources/swagger-ui/dist"
+        "SwaggerFilePath":      "/home/muesli/Sources/swagger-ui/dist",
+        "ImageFilePath":        "/home/muesli/Sources/go/src/gitlab.techcultivation.org/sangha/sangha/tmp"
     },
 
     "Connections": {

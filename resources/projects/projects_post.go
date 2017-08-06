@@ -1,6 +1,8 @@
 package projects
 
 import (
+	"encoding/base64"
+	"log"
 	"net/http"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
@@ -18,6 +20,7 @@ type ProjectPostStruct struct {
 		Website    string `json:"website"`
 		License    string `json:"license"`
 		Repository string `json:"repository"`
+		Logo       string `json:"logo"`
 	} `json:"project"`
 }
 
@@ -66,6 +69,16 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		Website:    ups.Project.Website,
 		License:    ups.Project.License,
 		Repository: ups.Project.Repository,
+	}
+
+	logo, err := base64.StdEncoding.DecodeString(ups.Project.Logo)
+	if err == nil {
+		project.Logo, err = context.(*db.APIContext).StoreImage(logo)
+		if err != nil {
+			log.Println("WARNING: could not store image:", err)
+		}
+	} else {
+		log.Println("WARNING: could not decode logo:", err)
 	}
 
 	err = project.Save(context.(*db.APIContext))
