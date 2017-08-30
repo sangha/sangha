@@ -91,6 +91,21 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		return
 	}
 
+	budget := db.Budget{
+		ProjectID: project.ID,
+		ParentID:  0,
+		Name:      project.Name,
+	}
+	err = budget.Save(context.(*db.APIContext))
+	if err != nil {
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusInternalServerError,
+			true,
+			"Can't create budget for new project",
+			"ProjectResource POST"))
+		return
+	}
+
 	resp := ProjectResponse{}
 	resp.Init(context)
 	resp.AddProject(&project)

@@ -13,6 +13,7 @@ import (
 type BudgetPostStruct struct {
 	Budget struct {
 		ProjectID int64  `json:"project_id"`
+		ParentID  int64  `json:"parent_id"`
 		Name      string `json:"name"`
 	} `json:"budget"`
 }
@@ -48,6 +49,7 @@ func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, requ
 
 	budget := db.Budget{
 		ProjectID: ups.Budget.ProjectID,
+		ParentID:  ups.Budget.ParentID,
 		Name:      ups.Budget.Name,
 	}
 	err := budget.Save(context.(*db.APIContext))
