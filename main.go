@@ -15,9 +15,9 @@ import (
 	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
 	"gitlab.techcultivation.org/sangha/sangha/resources/users"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/emicklei/go-restful-swagger12"
 	"github.com/muesli/smolder"
+	log "github.com/sirupsen/logrus"
 )
 
 func handleSignals() (chan int, bool) {
