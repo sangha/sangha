@@ -39,3 +39,17 @@ INSERT INTO projects
         ''
     );
 INSERT INTO budgets (project_id, parent, name) VALUES (3, 0, 'smolder');
+
+INSERT INTO projects
+    (id, slug, name, about, website, license, repository, logo)
+    VALUES (
+        4,
+        'beehive',
+        'beehive',
+        'A flexible event/agent & automation system with lots of bees 🐝',
+        'https://github.com/muesli/beehive',
+        'AGPL',
+        'https://github.com/muesli/beehive.git',
+        '08ca2b0038993af9c2f383f0914004eefd33a6df'
+    );
+INSERT INTO budgets (project_id, parent, name) VALUES (4, 0, 'beehive');
