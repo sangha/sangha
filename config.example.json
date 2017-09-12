@@ -1,25 +1,27 @@
 {
     "API": {
-        "BaseURL":              "http://localhost:9991",
-        "PathPrefix":           "v1/",
-        "Bind":                 ":9991",
+        "BaseURL": "http://localhost:9991",
+        "PathPrefix": "v1/",
+        "Bind": ":9991",
 
-        "SwaggerAPIPath":       "/apidocs.json",
-        "SwaggerPath":          "/apidocs/",
-        "SwaggerFilePath":      "/home/muesli/Sources/swagger-ui/dist",
-        "ImageFilePath":        "/home/muesli/Sources/go/src/gitlab.techcultivation.org/sangha/sangha/tmp"
+        "SwaggerAPIPath": "/apidocs.json",
+        "SwaggerPath": "/apidocs/",
+        "SwaggerFilePath": "/home/ubuntu/swagger-ui/dist",
+        "ImageFilePath": "/home/ubuntu/sangha_images"
     },
 
     "Connections": {
         "PostgreSQLConnection": {
-            "Host":             "localhost",
-            "DbName":           "sangha",
-            "User":             "user",
-            "Password":         "password"
+            "Host": "localhost",
+            "DbName": "sangha",
+            "User": "user",
+            "Password": "password",
+            "Port": 5432,
+            "SslMode": "disable"
         }
     },
 
     "Web": {
-        "BaseURL":              "http://localhost:4200/"
+        "BaseURL": "http://localhost:4200/"
     }
 }
