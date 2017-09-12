@@ -29,10 +29,7 @@ func (context *APIContext) BuildImageURL(id string, placeholder string) string {
 	u, _ := url.Parse(context.Config.Web.BaseURL)
 
 	if id == "" {
-		u.Path = path.Join(u.Path, "images", "512.png")
-		q := u.Query()
-		q.Set("text", placeholder)
-		u.RawQuery = q.Encode()
+		u.Path = path.Join(u.Path, "images", placeholder+".png")
 	} else {
 		u.Path = path.Join(u.Path, "images", id)
 	}
