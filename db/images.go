@@ -25,12 +25,14 @@ func (context *APIContext) StoreImage(logo []byte) (string, error) {
 	return shasum, nil
 }
 
-func (context *APIContext) BuildImageURL(id string) string {
+func (context *APIContext) BuildImageURL(id string, placeholder string) string {
+	u, _ := url.Parse(context.Config.Web.BaseURL)
+
 	if id == "" {
-		return ""
+		u.Path = path.Join(u.Path, "images", "512.png?text="+placeholder)
+	} else {
+		u.Path = path.Join(u.Path, "images", id)
 	}
 
-	u, _ := url.Parse(context.Config.Web.BaseURL)
-	u.Path = path.Join(u.Path, "images", id)
 	return u.String()
 }

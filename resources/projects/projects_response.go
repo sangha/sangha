@@ -62,7 +62,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 		Website:    project.Website,
 		License:    project.License,
 		Repository: project.Repository,
-		Logo:       context.(*db.APIContext).BuildImageURL(project.Logo),
+		Logo:       context.(*db.APIContext).BuildImageURL(project.Logo, project.Name),
 		Activated:  project.Activated,
 	}
 
