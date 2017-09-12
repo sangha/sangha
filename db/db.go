@@ -73,7 +73,7 @@ func GetDatabase() *sql.DB {
 				(
 				  id          	bigserial 	PRIMARY KEY,
 				  project_id    bigserial   NOT NULL,
-				  parent		bigserial	DEFAULT 0,
+				  parent		bigserial,
 				  name       	text      	NOT NULL,
 				  CONSTRAINT    fk_project  FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
