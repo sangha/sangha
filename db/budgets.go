@@ -8,10 +8,13 @@ import (
 
 // Budget represents the db schema of a budget
 type Budget struct {
-	ID        int64
-	ProjectID int64
-	ParentID  int64
-	Name      string
+	ID             int64
+	ProjectID      int64
+	UserID         int64
+	ParentID       int64
+	Name           string
+	Private        bool
+	PrivateBalance bool
 }
 
 // LoadBudgetByID loads a budget by ID from the database
@@ -21,8 +24,8 @@ func (context *APIContext) LoadBudgetByID(id int64) (Budget, error) {
 		return budget, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, project_id, parent, name FROM budgets WHERE id = $1", id).
-		Scan(&budget.ID, &budget.ProjectID, &budget.ParentID, &budget.Name)
+	err := context.QueryRow("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE id = $1", id).
+		Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 	return budget, err
 }
 
@@ -33,8 +36,8 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 		return budget, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, project_id, parent, name FROM budgets WHERE project_id = $1 AND parent = 0", project.ID).
-		Scan(&budget.ID, &budget.ProjectID, &budget.ParentID, &budget.Name)
+	err := context.QueryRow("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE project_id = $1 AND parent = 0", project.ID).
+		Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 	return budget, err
 }
 
@@ -54,7 +57,7 @@ func (context *APIContext) GetBudgetByID(id int64) (Budget, error) {
 func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 	budgets := []Budget{}
 
-	rows, err := context.Query("SELECT id, project_id, parent, name FROM budgets")
+	rows, err := context.Query("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets")
 	if err != nil {
 		return budgets, err
 	}
@@ -62,7 +65,7 @@ func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 	defer rows.Close()
 	for rows.Next() {
 		budget := Budget{}
-		err = rows.Scan(&budget.ID, &budget.ProjectID, &budget.ParentID, &budget.Name)
+		err = rows.Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 		if err != nil {
 			return budgets, err
 		}
@@ -75,8 +78,8 @@ func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 
 // Update a budget in the database
 func (budget *Budget) Update(context *APIContext) error {
-	_, err := context.Exec("UPDATE budgets SET project_id = $1, parent = $2, name = $3 WHERE id = $4",
-		budget.ProjectID, budget.ParentID, budget.Name, budget.ID)
+	_, err := context.Exec("UPDATE budgets SET project_id = $1, user_id = $2, parent = $3, name = $4, private = $5, private_balance = $6 WHERE id = $7",
+		budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Private, budget.PrivateBalance, budget.ID)
 	if err != nil {
 		panic(err)
 	}
@@ -87,10 +90,17 @@ func (budget *Budget) Update(context *APIContext) error {
 
 // Save a budget to the database
 func (budget *Budget) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO budgets (project_id, parent, name) VALUES ($1, $2, $3) RETURNING id",
-		budget.ProjectID, budget.ParentID, budget.Name).Scan(&budget.ID)
+	err := context.QueryRow("INSERT INTO budgets (project_id, user_id, parent, name, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+		budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Private, budget.PrivateBalance).Scan(&budget.ID)
 	budgetsCache.Delete(budget.ID)
 	return err
+}
+
+func (budget *Budget) Balance(context *APIContext) (float64, error) {
+	var val float64
+	err := context.QueryRow("SELECT SUM(value) FROM transactions WHERE budget_id = $1", budget.ID).
+		Scan(&val)
+	return val, err
 }
 
 type BudgetRatioPair struct {

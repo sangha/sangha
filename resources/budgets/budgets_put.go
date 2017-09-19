@@ -65,6 +65,8 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 
 	budget.ProjectID = pps.Budget.ProjectID
 	budget.Name = pps.Budget.Name
+	budget.Private = pps.Budget.Private
+	budget.PrivateBalance = pps.Budget.PrivateBalance
 
 	err = budget.Update(context.(*db.APIContext))
 	if err != nil {
