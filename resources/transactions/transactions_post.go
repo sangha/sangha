@@ -40,7 +40,7 @@ func (r *TransactionResource) Post(context smolder.APIContext, data interface{},
 	log.Printf("Got transaction request: %+v\n", ups)
 
 	transaction := db.Transaction{
-		Value: ups.Transaction.Amount,
+		Amount: ups.Transaction.Amount,
 	}
 
 	resp := TransactionResponse{}

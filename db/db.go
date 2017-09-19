@@ -88,7 +88,7 @@ func GetDatabase() *sql.DB {
 				(
 				  id          			bigserial 		PRIMARY KEY,
 				  user_id				bigserial	   	NOT NULL,
-				  value					numeric(12,4)	NOT NULL,
+				  amount				numeric(12,4)	NOT NULL,
 				  currency				text			NOT NULL,
 				  code					text,
 				  description			text,
@@ -104,7 +104,7 @@ func GetDatabase() *sql.DB {
 				  id          		bigserial 		PRIMARY KEY,
 				  budget_id			bigserial   	NOT NULL,
 				  from_budget_id	int,
-				  value				numeric(12,4)	NOT NULL,
+				  amount			numeric(12,4)	NOT NULL,
 				  created_at		timestamp		NOT NULL,
 				  CONSTRAINT    	fk_transactions_budget_id		FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
 				  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT

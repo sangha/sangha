@@ -50,7 +50,7 @@ func prepareTransactionResponse(context smolder.APIContext, transaction *db.Tran
 	resp := transactionInfoResponse{
 		ID:       transaction.ID,
 		BudgetID: transaction.BudgetID,
-		Amount:   transaction.Value,
+		Amount:   transaction.Amount,
 	}
 
 	return resp
