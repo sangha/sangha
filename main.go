@@ -13,9 +13,10 @@ import (
 	"gitlab.techcultivation.org/sangha/sangha/resources/budgets"
 	"gitlab.techcultivation.org/sangha/sangha/resources/codes"
 	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
+	"gitlab.techcultivation.org/sangha/sangha/resources/transactions"
 	"gitlab.techcultivation.org/sangha/sangha/resources/users"
 
-	"github.com/emicklei/go-restful-swagger12"
+	swagger "github.com/emicklei/go-restful-swagger12"
 	"github.com/muesli/smolder"
 	log "github.com/sirupsen/logrus"
 )
@@ -89,6 +90,7 @@ func main() {
 		&projects.ProjectResource{},
 		&budgets.BudgetResource{},
 		&codes.CodeResource{},
+		&transactions.TransactionResource{},
 	)
 
 	if config.Settings.API.SwaggerFilePath != "" {
