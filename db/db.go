@@ -53,40 +53,57 @@ func GetDatabase() *sql.DB {
 				  address		text[],
 				  activated   	bool		DEFAULT false,
 				  authtoken   	text[]     	NOT NULL,
-				  CONSTRAINT  	uk_email 	UNIQUE (email)
+				  CONSTRAINT  	uk_users_email 	UNIQUE (email)
 				)`,
 			`CREATE TABLE IF NOT EXISTS projects
 				(
-				  id          	bigserial 		PRIMARY KEY,
-				  slug			text			NOT NULL,
-				  name       	text      		NOT NULL,
-				  about			text      		NOT NULL,
-				  website      	text			DEFAULT '',
-				  license      	text			DEFAULT '',
-				  repository	text			DEFAULT '',
-				  logo			text			DEFAULT '',
-				  activated   	bool			DEFAULT false,
-				  CONSTRAINT  	uk_slug 		UNIQUE (slug),
-				  CONSTRAINT  	uk_repository	UNIQUE (repository)
+				  id          		bigserial 		PRIMARY KEY,
+				  slug				text			NOT NULL,
+				  name       		text      		NOT NULL,
+				  about				text      		NOT NULL,
+				  website      		text			DEFAULT '',
+				  license      		text			DEFAULT '',
+				  repository		text			DEFAULT '',
+				  logo				text			DEFAULT '',
+				  created_at		timestamp		NOT NULL,
+				  private			bool			DEFAULT false,
+				  private_balance	bool			DEFAULT true,
+				  activated   		bool			DEFAULT false,
+				  CONSTRAINT  		uk_projects_slug 		UNIQUE (slug),
+				  CONSTRAINT  		uk_projects_repository	UNIQUE (repository)
 				)`,
 			`CREATE TABLE IF NOT EXISTS budgets
 				(
-				  id          	bigserial 	PRIMARY KEY,
-				  project_id    bigserial   NOT NULL,
-				  parent		bigserial,
-				  name       	text      	NOT NULL,
-				  CONSTRAINT    fk_project  FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				  id          		bigserial 	PRIMARY KEY,
+				  project_id    	int,
+				  user_id			int,
+				  parent			bigserial,
+				  name       		text      	NOT NULL,
+				  private			bool		DEFAULT false,
+				  private_balance	bool		DEFAULT true,
+				  CONSTRAINT    	fk_budgets_project_id	FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+				  CONSTRAINT    	fk_budgets_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				)`,
+			`CREATE TABLE IF NOT EXISTS transactions
+				(
+				  id          		bigserial 		PRIMARY KEY,
+				  budget_id			bigserial   	NOT NULL,
+				  from_budget_id	int,
+				  value				numeric(12,4)	NOT NULL,
+				  created_at		timestamp		NOT NULL,
+				  CONSTRAINT    	fk_transactions_budget_id		FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
+				  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
 				)`,
 			`CREATE TABLE IF NOT EXISTS codes
 				(
-				  id          	bigserial 		PRIMARY KEY,
-				  code       	text      		NOT NULL,
+				  id			bigserial 		PRIMARY KEY,
+				  code			text      		NOT NULL,
 				  budget_ids   	int[]			NOT NULL,
 				  ratios		int[]			NOT NULL,
 				  user_id   	int,
-				  CONSTRAINT    uk_code  		UNIQUE (code),
-				  CONSTRAINT    uk_budget_ids	UNIQUE (budget_ids, ratios, user_id),
-				  CONSTRAINT    fk_user			FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				  CONSTRAINT    uk_codes_code  		UNIQUE (code),
+				  CONSTRAINT    uk_codes_budget_ids	UNIQUE (budget_ids, ratios, user_id),
+				  CONSTRAINT    fk_codes_user_id	FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
 		}
 
@@ -100,6 +117,9 @@ func GetDatabase() *sql.DB {
 			`CREATE INDEX idx_budgets_name ON budgets(name)`,
 			`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,
 			`CREATE INDEX idx_codes_code ON codes(code)`,
+			`CREATE INDEX idx_transactions_budget_id ON transactions(budget_id)`,
+			`CREATE INDEX idx_transactions_from_budget_id ON transactions(from_budget_id)`,
+			`CREATE INDEX idx_transactions_created_at ON transactions(created_at)`,
 		}
 
 		for _, v := range tables {
