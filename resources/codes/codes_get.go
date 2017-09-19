@@ -73,9 +73,9 @@ func (r *CodeResource) Get(context smolder.APIContext, request *restful.Request,
 
 		var uid int64
 		if len(userID) > 0 {
-			uid, _ = strconv.ParseInt(userID[0], 10, 0)
+			uid, _ = strconv.ParseInt(userID[0], 10, 64)
 		}
-		code, err := context.(*db.APIContext).LoadCodeByBudgetsAndRatios(budgetIDs, ratios, int(uid))
+		code, err := context.(*db.APIContext).LoadCodeByBudgetsAndRatios(budgetIDs, ratios, uid)
 		if err != nil {
 			r.NotFound(request, response)
 			return
