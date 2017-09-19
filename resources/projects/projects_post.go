@@ -14,13 +14,15 @@ import (
 // ProjectPostStruct holds all values of an incoming POST request
 type ProjectPostStruct struct {
 	Project struct {
-		Slug       string `json:"slug"`
-		Name       string `json:"name"`
-		About      string `json:"about"`
-		Website    string `json:"website"`
-		License    string `json:"license"`
-		Repository string `json:"repository"`
-		Logo       string `json:"logo"`
+		Slug           string `json:"slug"`
+		Name           string `json:"name"`
+		About          string `json:"about"`
+		Website        string `json:"website"`
+		License        string `json:"license"`
+		Repository     string `json:"repository"`
+		Logo           string `json:"logo"`
+		Private        bool   `json:"private"`
+		PrivateBalance bool   `json:"private_balance"`
 	} `json:"project"`
 }
 
@@ -63,12 +65,14 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	}
 
 	project := db.Project{
-		Slug:       ups.Project.Slug,
-		Name:       ups.Project.Name,
-		About:      ups.Project.About,
-		Website:    ups.Project.Website,
-		License:    ups.Project.License,
-		Repository: ups.Project.Repository,
+		Slug:           ups.Project.Slug,
+		Name:           ups.Project.Name,
+		About:          ups.Project.About,
+		Website:        ups.Project.Website,
+		License:        ups.Project.License,
+		Repository:     ups.Project.Repository,
+		Private:        false,
+		PrivateBalance: true,
 	}
 
 	logo, err := base64.StdEncoding.DecodeString(ups.Project.Logo)
@@ -92,9 +96,11 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	}
 
 	budget := db.Budget{
-		ProjectID: project.ID,
-		ParentID:  0,
-		Name:      project.Name,
+		ProjectID:      project.ID,
+		ParentID:       0,
+		Name:           project.Name,
+		Private:        false,
+		PrivateBalance: true,
 	}
 	err = budget.Save(context.(*db.APIContext))
 	if err != nil {
