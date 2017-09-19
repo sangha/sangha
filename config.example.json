@@ -18,6 +18,15 @@
             "Password": "password",
             "Port": 5432,
             "SslMode": "disable"
+        },
+
+        "AMQPConnection": {
+            "Host": "localhost",
+            "User": "user",
+            "Password": "password",
+            "Port": 5672,
+            "Broker": "rabbit",
+            "Queue": "payments"
         }
     },
 

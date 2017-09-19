@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -24,6 +25,7 @@ type Data struct {
 
 	Connections struct {
 		PostgreSQLConnection PostgreSQLConnection
+		AMQPConnection       AMQPConnection
 	}
 
 	Web struct {
@@ -39,6 +41,16 @@ type PostgreSQLConnection struct {
 	Port     int
 	DbName   string
 	SslMode  string
+}
+
+// AMQPConnection contains all of the db configuration values
+type AMQPConnection struct {
+	User     string
+	Password string
+	Host     string
+	Port     int
+	Broker   string
+	Queue    string
 }
 
 var (
@@ -109,4 +121,9 @@ func (c *PostgreSQLConnection) Marshal() string {
 	}
 
 	return out
+}
+
+// Marshal returns an AMQP "Connection String"
+func (c *AMQPConnection) Marshal() string {
+	return fmt.Sprintf("amqp://%s:%s@%s:%d/%s", c.User, c.Password, c.Host, c.Port, c.Broker)
 }
