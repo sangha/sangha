@@ -27,7 +27,7 @@ func (context *APIContext) LoadTransactionByID(id int64) (Transaction, error) {
 
 // Save a transaction to the database
 func (transaction *Transaction) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO transactions (budget_id, from_budget_id, value, created_at) VALUES ($1, $2, $3) RETURNING id",
+	err := context.QueryRow("INSERT INTO transactions (budget_id, from_budget_id, value, created_at) VALUES ($1, $2, $3, $4) RETURNING id",
 		transaction.BudgetID, transaction.FromBudgetID, transaction.Value, time.Now()).Scan(&transaction.ID)
 	return err
 }

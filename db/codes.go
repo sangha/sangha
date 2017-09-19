@@ -31,7 +31,7 @@ func (context *APIContext) LoadCodeByCode(c string) (Code, error) {
 	code := Code{}
 
 	err := context.QueryRow("SELECT id, code, budget_ids, ratios, user_id FROM codes WHERE code = $1", c).
-		Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, code.UserID)
+		Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
 	return code, err
 }
 
@@ -43,7 +43,7 @@ func (context *APIContext) LoadCodeByID(id int64) (Code, error) {
 	}
 
 	err := context.QueryRow("SELECT id, code, budget_ids, ratios, user_id FROM codes WHERE id = $1", id).
-		Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, code.UserID)
+		Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
 	return code, err
 }
 
@@ -100,7 +100,7 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 
 	if userID > 0 {
 		err = context.QueryRow("SELECT id, code, budget_ids, ratios, user_id FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = $3", budgetIDs, ratios, userID).
-			Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, code.UserID)
+			Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
 	} else {
 		err = context.QueryRow("SELECT id, code, budget_ids, ratios FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id IS NULL", budgetIDs, ratios).
 			Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios)
@@ -143,7 +143,7 @@ func (context *APIContext) LoadAllCodes() ([]Code, error) {
 	defer rows.Close()
 	for rows.Next() {
 		code := Code{}
-		err = rows.Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, code.UserID)
+		err = rows.Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
 		if err != nil {
 			return codes, err
 		}
