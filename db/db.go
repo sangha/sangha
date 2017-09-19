@@ -84,6 +84,21 @@ func GetDatabase() *sql.DB {
 				  CONSTRAINT    	fk_budgets_project_id	FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 				  CONSTRAINT    	fk_budgets_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
+			`CREATE TABLE IF NOT EXISTS payments
+				(
+				  id          			bigserial 		PRIMARY KEY,
+				  user_id				bigserial	   	NOT NULL,
+				  value					numeric(12,4)	NOT NULL,
+				  currency				text			NOT NULL,
+				  code					text,
+				  description			text,
+				  source				text			NOT NULL,
+				  source_id				text			NOT NULL,
+				  source_payer_id		text,
+				  source_transaction_id	text			NOT NULL,
+				  created_at			timestamp		NOT NULL,
+				  CONSTRAINT    		fk_payments_user_id	FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				)`,
 			`CREATE TABLE IF NOT EXISTS transactions
 				(
 				  id          		bigserial 		PRIMARY KEY,
@@ -148,6 +163,8 @@ func WipeDatabase() {
 	/*
 		drops := []string{
 			`DROP TABLE codes`,
+			`DROP TABLE payments`,
+			`DROP TABLE transactions`,
 			`DROP TABLE budgets`,
 			`DROP TABLE projects`,
 			`DROP TABLE users`,

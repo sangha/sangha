@@ -9,9 +9,10 @@ import (
 	"gitlab.techcultivation.org/sangha/sangha/config"
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
-	//	"gitlab.techcultivation.org/sangha/sangha/resources/sessions"
+	// "gitlab.techcultivation.org/sangha/sangha/resources/sessions"
 	"gitlab.techcultivation.org/sangha/sangha/resources/budgets"
 	"gitlab.techcultivation.org/sangha/sangha/resources/codes"
+	"gitlab.techcultivation.org/sangha/sangha/resources/payments"
 	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
 	"gitlab.techcultivation.org/sangha/sangha/resources/transactions"
 	"gitlab.techcultivation.org/sangha/sangha/resources/users"
@@ -91,6 +92,7 @@ func main() {
 		&budgets.BudgetResource{},
 		&codes.CodeResource{},
 		&transactions.TransactionResource{},
+		&payments.PaymentResource{},
 	)
 
 	if config.Settings.API.SwaggerFilePath != "" {
