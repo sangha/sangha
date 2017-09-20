@@ -1,6 +1,8 @@
 package payments
 
 import (
+	"time"
+
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/muesli/smolder"
@@ -15,9 +17,17 @@ type PaymentResponse struct {
 }
 
 type paymentInfoResponse struct {
-	ID     int64   `json:"id"`
-	UserID int64   `json:"user_id"`
-	Amount float64 `json:"amount"`
+	ID                  int64     `json:"id"`
+	UserID              int64     `json:"user_id"`
+	Amount              float64   `json:"amount"`
+	Currency            string    `json:"currency"`
+	Code                string    `json:"code"`
+	Description         string    `json:"description"`
+	Source              string    `json:"source"`
+	SourceID            string    `json:"source_id"`
+	SourcePayerID       string    `json:"source_payer_id"`
+	SourceTransactionID string    `json:"source_transaction_id"`
+	CreatedAt           time.Time `json:"created_at"`
 }
 
 // Init a new response
@@ -48,9 +58,16 @@ func (r *PaymentResponse) EmptyResponse() interface{} {
 
 func preparePaymentResponse(context smolder.APIContext, payment *db.Payment) paymentInfoResponse {
 	resp := paymentInfoResponse{
-		ID:     payment.ID,
-		UserID: payment.UserID,
-		Amount: payment.Amount,
+		ID:                  payment.ID,
+		UserID:              payment.UserID,
+		Amount:              payment.Amount,
+		Currency:            payment.Currency,
+		Description:         payment.Description,
+		Source:              payment.Source,
+		SourceID:            payment.SourceID,
+		SourcePayerID:       payment.SourcePayerID,
+		SourceTransactionID: payment.SourceTransactionID,
+		CreatedAt:           payment.CreatedAt,
 	}
 
 	return resp

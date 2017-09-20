@@ -1,6 +1,7 @@
 package payments
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -42,6 +43,7 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 	log.Printf("Got payment request: %+v\n", ups)
 
 	ctx := context.(*db.APIContext)
+	payment := db.Payment{}
 
 	switch ups.Payment.Source {
 	case "paypal":
@@ -52,12 +54,30 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 		if resp.StatusCode != http.StatusOK {
-			panic(string(body))
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusBadRequest,
+				false,
+				"Unknown payment ID",
+				"PaymentResource POST"))
+			return
 		}
-	}
 
-	payment := db.Payment{
-		Amount: ups.Payment.Amount,
+		err = json.Unmarshal(body, &payment)
+		if err != nil {
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusInternalServerError,
+				true,
+				"Error decoding payment response",
+				"PaymentResource POST"))
+			return
+		}
+	default:
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			false,
+			"Unknown payment source",
+			"PaymentResource POST"))
+		return
 	}
 
 	resp := PaymentResponse{}
