@@ -27,7 +27,9 @@
             "Port": 5672,
             "Broker": "rabbit",
             "Queue": "payments"
-        }
+        },
+
+        "PayPal": "http://localhost:9801"
     },
 
     "Web": {

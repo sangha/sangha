@@ -26,6 +26,14 @@ type Data struct {
 	Connections struct {
 		PostgreSQLConnection PostgreSQLConnection
 		AMQPConnection       AMQPConnection
+		PayPal               string
+	}
+
+	PaymentProviders struct {
+		PayPal struct {
+			ClientID string
+			Secret   string
+		}
 	}
 
 	Web struct {

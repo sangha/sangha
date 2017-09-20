@@ -1,7 +1,9 @@
 package payments
 
 import (
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
@@ -12,7 +14,7 @@ import (
 // PaymentPostStruct holds all values of an incoming POST request
 type PaymentPostStruct struct {
 	Payment struct {
-		Source          string  `json:"type"`
+		Source          string  `json:"source"`
 		SourceID        string  `json:"source_id"`
 		Amount          float64 `json:"amount"`
 		TransactionCode string  `json:"transaction_code"`
@@ -21,7 +23,7 @@ type PaymentPostStruct struct {
 
 // PostAuthRequired returns true because all requests need authentication
 func (r *PaymentResource) PostAuthRequired() bool {
-	return true
+	return false
 }
 
 // PostDoc returns the description of this API endpoint
@@ -38,6 +40,21 @@ func (r *PaymentResource) PostParams() []*restful.Parameter {
 func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	ups := data.(*PaymentPostStruct)
 	log.Printf("Got payment request: %+v\n", ups)
+
+	ctx := context.(*db.APIContext)
+
+	switch ups.Payment.Source {
+	case "paypal":
+		resp, err := http.Get(ctx.Config.Connections.PayPal + "/" + ups.Payment.SourceID)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if resp.StatusCode != http.StatusOK {
+			panic(string(body))
+		}
+	}
 
 	payment := db.Payment{
 		Amount: ups.Payment.Amount,
