@@ -64,6 +64,7 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 		} */
 
 	project.Name = pps.Project.Name
+	project.Summary = pps.Project.Summary
 	project.About = pps.Project.About
 	project.Website = pps.Project.Website
 	project.License = pps.Project.License

@@ -1,9 +1,10 @@
 INSERT INTO projects
-    (id, slug, name, about, website, license, repository, logo, created_at)
+    (id, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         1,
         'toktok',
         'toktok',
+        'Typo/error resilient, human-readable token generator',
         'Typo/error resilient, human-readable token generator',
         'https://github.com/muesli/toktok',
         'MIT',
@@ -14,11 +15,12 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (1, null, 0, 'toktok');
 
 INSERT INTO projects
-    (id, slug, name, about, website, license, repository, logo, created_at)
+    (id, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         2,
         'cache2go',
         'cache2go',
+        'Concurrency-safe Go caching library with expiration capabilities and access counters',
         'Concurrency-safe Go caching library with expiration capabilities and access counters',
         'https://github.com/muesli/cache2go',
         'FOSS',
@@ -29,11 +31,12 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (2, null, 0, 'cache2go');
 
 INSERT INTO projects
-    (id, slug, name, about, website, license, repository, logo, created_at)
+    (id, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         3,
         'smolder',
         'smolder',
+        'smolder makes it easy to write restful Golang JSON APIs',
         'smolder makes it easy to write restful Golang JSON APIs',
         'https://github.com/muesli/smolder',
         'AGPL',
@@ -44,11 +47,12 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (3, null, 0, 'smolder');
 
 INSERT INTO projects
-    (id, slug, name, about, website, license, repository, logo, created_at)
+    (id, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         4,
         'beehive',
         'beehive',
+        'A flexible event/agent & automation system with lots of bees 🐝',
         'A flexible event/agent & automation system with lots of bees 🐝',
         'https://github.com/muesli/beehive',
         'AGPL',

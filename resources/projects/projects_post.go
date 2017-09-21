@@ -16,6 +16,7 @@ type ProjectPostStruct struct {
 	Project struct {
 		Slug           string `json:"slug"`
 		Name           string `json:"name"`
+		Summary        string `json:"summary"`
 		About          string `json:"about"`
 		Website        string `json:"website"`
 		License        string `json:"license"`
@@ -67,6 +68,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	project := db.Project{
 		Slug:           ups.Project.Slug,
 		Name:           ups.Project.Name,
+		Summary:        ups.Project.Summary,
 		About:          ups.Project.About,
 		Website:        ups.Project.Website,
 		License:        ups.Project.License,

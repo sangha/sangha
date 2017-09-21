@@ -18,6 +18,7 @@ type projectInfoResponse struct {
 	ID         int64  `json:"id"`
 	Slug       string `json:"slug"`
 	Name       string `json:"name"`
+	Summary    string `json:"summary"`
 	About      string `json:"about"`
 	Website    string `json:"website"`
 	License    string `json:"license"`
@@ -58,6 +59,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 		ID:         project.ID,
 		Slug:       project.Slug,
 		Name:       project.Name,
+		Summary:    project.Summary,
 		About:      project.About,
 		Website:    project.Website,
 		License:    project.License,
