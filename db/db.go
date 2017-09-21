@@ -51,6 +51,9 @@ func GetDatabase() *sql.DB {
 				  password		text		NOT NULL,
 				  about       	text		DEFAULT '',
 				  address		text[],
+				  zip			text,
+				  city			text		NOT NULL,
+				  country		text		NOT NULL,
 				  activated   	bool		DEFAULT false,
 				  authtoken   	text[]     	NOT NULL,
 				  CONSTRAINT  	uk_users_email 	UNIQUE (email)

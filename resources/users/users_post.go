@@ -16,6 +16,9 @@ type UserPostStruct struct {
 		Nickname string   `json:"nickname"`
 		About    string   `json:"about"`
 		Address  []string `json:"address"`
+		ZIP      string   `json:"zip"`
+		City     string   `json:"city"`
+		Country  string   `json:"country"`
 	} `json:"user"`
 }
 
@@ -69,6 +72,9 @@ func (r *UserResource) Post(context smolder.APIContext, data interface{}, reques
 		Email:    ups.User.Email,
 		About:    ups.User.About,
 		Address:  ups.User.Address,
+		ZIP:      ups.User.ZIP,
+		City:     ups.User.City,
+		Country:  ups.User.Country,
 	}
 	err = user.Save(context.(*db.APIContext))
 	if err != nil {
