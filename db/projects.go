@@ -34,6 +34,18 @@ func (context *APIContext) LoadProjectByUUID(uuid string) (Project, error) {
 	return project, err
 }
 
+// GetProjectByID loads a project by ID from the database
+func (context *APIContext) GetProjectByID(id int64) (Project, error) {
+	project := Project{}
+	if id == 0 {
+		return project, ErrInvalidID
+	}
+
+	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated FROM projects WHERE id = $1", id).
+		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.Activated)
+	return project, err
+}
+
 // GetProjectByUUID returns a project by UUID from the cache
 func (context *APIContext) GetProjectByUUID(uuid string) (Project, error) {
 	project := Project{}
