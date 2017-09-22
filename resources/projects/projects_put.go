@@ -2,7 +2,6 @@ package projects
 
 import (
 	"net/http"
-	"strconv"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
@@ -35,19 +34,7 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 	resp := ProjectResponse{}
 	resp.Init(context)
 
-	pps := data.(*ProjectPutStruct)
-
-	id, err := strconv.Atoi(request.PathParameter("project-id"))
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Invalid project id",
-			"ProjectResource PUT"))
-		return
-	}
-
-	project, err := context.(*db.APIContext).GetProjectByID(int64(id))
+	project, err := context.(*db.APIContext).GetProjectByUUID(request.PathParameter("project-id"))
 	if err != nil {
 		r.NotFound(request, response)
 		return
@@ -63,6 +50,7 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 			return
 		} */
 
+	pps := data.(*ProjectPutStruct)
 	project.Name = pps.Project.Name
 	project.Summary = pps.Project.Summary
 	project.About = pps.Project.About

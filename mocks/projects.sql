@@ -1,7 +1,8 @@
 INSERT INTO projects
-    (id, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         1,
+        'abcd',
         'toktok',
         'toktok',
         'Typo/error resilient, human-readable token generator',
@@ -15,9 +16,10 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (1, null, 0, 'toktok');
 
 INSERT INTO projects
-    (id, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         2,
+        'bcde',
         'cache2go',
         'cache2go',
         'Concurrency-safe Go caching library with expiration capabilities and access counters',
@@ -31,9 +33,10 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (2, null, 0, 'cache2go');
 
 INSERT INTO projects
-    (id, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         3,
+        'cdef',
         'smolder',
         'smolder',
         'smolder makes it easy to write restful Golang JSON APIs',
@@ -47,9 +50,10 @@ INSERT INTO projects
 INSERT INTO budgets (project_id, user_id, parent, name) VALUES (3, null, 0, 'smolder');
 
 INSERT INTO projects
-    (id, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
         4,
+        'defg',
         'beehive',
         'beehive',
         'A flexible event/agent & automation system with lots of bees 🐝',

@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"strconv"
-
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
@@ -39,12 +37,7 @@ func (r *ProjectResource) GetByIDs(context smolder.APIContext, request *restful.
 	resp.Init(context)
 
 	for _, id := range ids {
-		iid, err := strconv.Atoi(id)
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
-		project, err := context.(*db.APIContext).GetProjectByID(int64(iid))
+		project, err := context.(*db.APIContext).GetProjectByUUID(id)
 		if err != nil {
 			r.NotFound(request, response)
 			return

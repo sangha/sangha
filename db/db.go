@@ -61,6 +61,7 @@ func GetDatabase() *sql.DB {
 			`CREATE TABLE IF NOT EXISTS projects
 				(
 				  id          		bigserial 		PRIMARY KEY,
+				  uuid				text			NOT NULL,
 				  slug				text			NOT NULL,
 				  name       		text      		NOT NULL,
 				  summary			text			NOT NULL,
@@ -131,6 +132,7 @@ func GetDatabase() *sql.DB {
 		indexes := []string{
 			`CREATE INDEX idx_users_email ON users(email)`,
 			`CREATE INDEX idx_users_authtoken ON users(authtoken)`,
+			`CREATE INDEX idx_projects_uuid ON projects(uuid)`,
 			`CREATE INDEX idx_projects_slug ON projects(slug)`,
 			`CREATE INDEX idx_projects_name ON projects(name)`,
 			`CREATE INDEX idx_budgets_name ON budgets(name)`,
@@ -238,7 +240,7 @@ func initCaches() {
 	projectsCache.SetDataLoader(func(key interface{}, args ...interface{}) *cache2go.CacheItem {
 		if len(args) == 1 {
 			if context, ok := args[0].(*APIContext); ok {
-				project, err := context.LoadProjectByID(key.(int64))
+				project, err := context.LoadProjectByUUID(key.(string))
 				if err != nil {
 					fmt.Println("projectsCache ERROR for key", key, ":", err)
 					return nil

@@ -15,7 +15,7 @@ type ProjectResponse struct {
 }
 
 type projectInfoResponse struct {
-	ID         int64  `json:"id"`
+	ID         string `json:"id"`
 	Slug       string `json:"slug"`
 	Name       string `json:"name"`
 	Summary    string `json:"summary"`
@@ -56,7 +56,7 @@ func (r *ProjectResponse) EmptyResponse() interface{} {
 
 func prepareProjectResponse(context smolder.APIContext, project *db.Project) projectInfoResponse {
 	resp := projectInfoResponse{
-		ID:         project.ID,
+		ID:         project.UUID,
 		Slug:       project.Slug,
 		Name:       project.Name,
 		Summary:    project.Summary,
