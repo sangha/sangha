@@ -2,7 +2,6 @@ package users
 
 import (
 	"net/http"
-	"strconv"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
@@ -39,12 +38,7 @@ func (r *UserResource) GetByIDs(context smolder.APIContext, request *restful.Req
 	resp.Init(context)
 
 	for _, id := range ids {
-		iid, err := strconv.Atoi(id)
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
-		user, err := context.(*db.APIContext).GetUserByID(int64(iid))
+		user, err := context.(*db.APIContext).GetUserByUUID(id)
 		if err != nil {
 			r.NotFound(request, response)
 			return

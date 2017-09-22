@@ -15,7 +15,7 @@ type UserResponse struct {
 }
 
 type userInfoResponse struct {
-	ID        int64    `json:"id"`
+	ID        string   `json:"id"`
 	Email     string   `json:"email"`
 	Nickname  string   `json:"nickname"`
 	About     string   `json:"about"`
@@ -54,7 +54,7 @@ func (r *UserResponse) EmptyResponse() interface{} {
 
 func prepareUserResponse(context smolder.APIContext, user *db.User) userInfoResponse {
 	resp := userInfoResponse{
-		ID:        user.ID,
+		ID:        user.UUID,
 		Email:     user.Email,
 		Nickname:  user.Nickname,
 		About:     user.About,
