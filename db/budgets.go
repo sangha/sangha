@@ -37,7 +37,7 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 		return budget, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE project_uuid = $1 AND parent = 0", project.UUID).
+	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE project_id = $1 AND parent = 0", project.ID).
 		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 	return budget, err
 }

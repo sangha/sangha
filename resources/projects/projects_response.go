@@ -24,7 +24,7 @@ type projectInfoResponse struct {
 	License    string `json:"license"`
 	Repository string `json:"repository"`
 	Logo       string `json:"logo"`
-	RootBudget int64  `json:"budget_root"`
+	RootBudget string `json:"budget_root"`
 	Activated  bool   `json:"activated"`
 }
 
@@ -69,7 +69,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 	}
 
 	budget, _ := context.(*db.APIContext).LoadRootBudgetForProject(project)
-	resp.RootBudget = budget.ID
+	resp.RootBudget = budget.UUID
 
 	return resp
 }
