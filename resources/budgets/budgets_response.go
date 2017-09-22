@@ -47,7 +47,7 @@ func (r *BudgetResponse) EmptyResponse() interface{} {
 }
 
 func prepareBudgetResponse(context smolder.APIContext, budget *db.Budget) budgetInfoResponse {
-	project, err := context.(*db.APIContext).GetProjectByID(budget.ProjectID)
+	project, err := context.(*db.APIContext).GetProjectByID(*budget.ProjectID)
 	if err != nil {
 		panic(err)
 	}

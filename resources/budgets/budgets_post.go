@@ -50,7 +50,7 @@ func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, requ
 	ups := data.(*BudgetPostStruct)
 
 	budget := db.Budget{
-		ProjectID:      ups.Budget.ProjectID,
+		ProjectID:      &ups.Budget.ProjectID,
 		ParentID:       ups.Budget.ParentID,
 		Name:           ups.Budget.Name,
 		Private:        ups.Budget.Private,

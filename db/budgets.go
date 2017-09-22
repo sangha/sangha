@@ -10,8 +10,8 @@ import (
 type Budget struct {
 	ID             int64
 	UUID           string
-	ProjectID      int64
-	UserID         int64
+	ProjectID      *int64
+	UserID         *int64
 	ParentID       int64
 	Name           string
 	Private        bool
@@ -43,9 +43,9 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 }
 
 // GetBudgetByUUID returns a budget by UUID from the cache
-func (context *APIContext) GetBudgetByUUID(id string) (Budget, error) {
+func (context *APIContext) GetBudgetByUUID(uuid string) (Budget, error) {
 	budget := Budget{}
-	budgetsCache, err := budgetsCache.Value(id, context)
+	budgetsCache, err := budgetsCache.Value(uuid, context)
 	if err != nil {
 		return budget, err
 	}

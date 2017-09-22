@@ -98,7 +98,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	}
 
 	budget := db.Budget{
-		ProjectID:      project.ID,
+		ProjectID:      &project.ID,
 		ParentID:       0,
 		Name:           project.Name,
 		Private:        false,
