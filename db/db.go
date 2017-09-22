@@ -46,6 +46,7 @@ func GetDatabase() *sql.DB {
 			`CREATE TABLE IF NOT EXISTS users
 				(
 				  id          	bigserial 	PRIMARY KEY,
+				  uuid			text		NOT NULL,
 				  email       	text		NOT NULL,
 				  nickname    	text      	NOT NULL,
 				  password		text		NOT NULL,
@@ -56,6 +57,7 @@ func GetDatabase() *sql.DB {
 				  country		text		NOT NULL,
 				  activated   	bool		DEFAULT false,
 				  authtoken   	text[]     	NOT NULL,
+				  CONSTRAINT  	uk_users_uuid 	UNIQUE (uuid),
 				  CONSTRAINT  	uk_users_email 	UNIQUE (email)
 				)`,
 			`CREATE TABLE IF NOT EXISTS projects
@@ -74,18 +76,21 @@ func GetDatabase() *sql.DB {
 				  private			bool			DEFAULT false,
 				  private_balance	bool			DEFAULT true,
 				  activated   		bool			DEFAULT false,
+				  CONSTRAINT  		uk_projects_uuid 		UNIQUE (uuid),
 				  CONSTRAINT  		uk_projects_slug 		UNIQUE (slug),
 				  CONSTRAINT  		uk_projects_repository	UNIQUE (repository)
 				)`,
 			`CREATE TABLE IF NOT EXISTS budgets
 				(
 				  id          		bigserial 	PRIMARY KEY,
+				  uuid				text		NOT NULL,
 				  project_id    	int,
 				  user_id			int,
 				  parent			bigserial,
 				  name       		text      	NOT NULL,
 				  private			bool		DEFAULT false,
 				  private_balance	bool		DEFAULT true,
+				  CONSTRAINT  		uk_budgets_uuid 		UNIQUE (uuid),
 				  CONSTRAINT    	fk_budgets_project_id	FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 				  CONSTRAINT    	fk_budgets_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
@@ -109,11 +114,13 @@ func GetDatabase() *sql.DB {
 				  id          		bigserial 		PRIMARY KEY,
 				  budget_id			bigserial   	NOT NULL,
 				  from_budget_id	int,
+				  to_budget_id		int,
 				  amount			numeric(12,4)	NOT NULL,
 				  created_at		timestamp		NOT NULL,
 				  CONSTRAINT    	fk_transactions_budget_id		FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
-				  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
-				)`,
+				  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
+				  CONSTRAINT    	fk_transactions_to_budget_id	FOREIGN KEY (to_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
+				  )`,
 			`CREATE TABLE IF NOT EXISTS codes
 				(
 				  id			bigserial 		PRIMARY KEY,
@@ -130,11 +137,13 @@ func GetDatabase() *sql.DB {
 		// FIXME: add IF NOT EXISTS to CREATE INDEX statements (coming in v9.5)
 		// See: http://www.postgresql.org/docs/devel/static/sql-createindex.html
 		indexes := []string{
+			`CREATE INDEX idx_users_uuid ON users(uuid)`,
 			`CREATE INDEX idx_users_email ON users(email)`,
 			`CREATE INDEX idx_users_authtoken ON users(authtoken)`,
 			`CREATE INDEX idx_projects_uuid ON projects(uuid)`,
 			`CREATE INDEX idx_projects_slug ON projects(slug)`,
 			`CREATE INDEX idx_projects_name ON projects(name)`,
+			`CREATE INDEX idx_budgets_uuid ON budgets(uuid)`,
 			`CREATE INDEX idx_budgets_name ON budgets(name)`,
 			`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,
 			`CREATE INDEX idx_codes_code ON codes(code)`,

@@ -13,7 +13,7 @@ INSERT INTO projects
         '',
         now()
     );
-INSERT INTO budgets (project_id, user_id, parent, name) VALUES (1, null, 0, 'toktok');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_abcd', 1, null, 0, 'toktok');
 
 INSERT INTO projects
     (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
@@ -30,7 +30,7 @@ INSERT INTO projects
         '',
         now()
     );
-INSERT INTO budgets (project_id, user_id, parent, name) VALUES (2, null, 0, 'cache2go');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_bcde', 2, null, 0, 'cache2go');
 
 INSERT INTO projects
     (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
@@ -47,7 +47,7 @@ INSERT INTO projects
         '',
         now()
     );
-INSERT INTO budgets (project_id, user_id, parent, name) VALUES (3, null, 0, 'smolder');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_cdef', 3, null, 0, 'smolder');
 
 INSERT INTO projects
     (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
@@ -61,9 +61,9 @@ INSERT INTO projects
         'https://github.com/muesli/beehive',
         'AGPL',
         'https://github.com/muesli/beehive.git',
-        '08ca2b0038993af9c2f383f0914004eefd33a6df',
+        '',
         now()
     );
-INSERT INTO budgets (project_id, user_id, parent, name) VALUES (4, null, 0, 'beehive');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_defg', 4, null, 0, 'beehive');
 
 INSERT INTO codes (code, budget_ids, ratios) VALUES ('ABCDEFGH', '{1,2}', '{66,34}');
