@@ -226,7 +226,7 @@ func initCaches() {
 	usersCache.SetDataLoader(func(key interface{}, args ...interface{}) *cache2go.CacheItem {
 		if len(args) == 1 {
 			if context, ok := args[0].(*APIContext); ok {
-				user, err := context.LoadUserByID(key.(int64))
+				user, err := context.LoadUserByUUID(key.(string))
 				if err != nil {
 					fmt.Println("usersCache ERROR for key", key, ":", err)
 					return nil
@@ -272,7 +272,7 @@ func initCaches() {
 	budgetsCache.SetDataLoader(func(key interface{}, args ...interface{}) *cache2go.CacheItem {
 		if len(args) == 1 {
 			if context, ok := args[0].(*APIContext); ok {
-				budget, err := context.LoadBudgetByID(key.(int64))
+				budget, err := context.LoadBudgetByUUID(key.(string))
 				if err != nil {
 					fmt.Println("budgetsCache ERROR for key", key, ":", err)
 					return nil
