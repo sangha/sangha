@@ -15,8 +15,8 @@ type BudgetResponse struct {
 }
 
 type budgetInfoResponse struct {
-	ID        int64  `json:"id"`
-	ProjectID int64  `json:"project_id"`
+	ID        string `json:"id"`
+	ProjectID string `json:"project_id"`
 	Name      string `json:"name"`
 }
 
@@ -47,9 +47,14 @@ func (r *BudgetResponse) EmptyResponse() interface{} {
 }
 
 func prepareBudgetResponse(context smolder.APIContext, budget *db.Budget) budgetInfoResponse {
+	project, err := context.(*db.APIContext).GetProjectByID(budget.ProjectID)
+	if err != nil {
+		panic(err)
+	}
+
 	resp := budgetInfoResponse{
-		ID:        budget.ID,
-		ProjectID: budget.ProjectID,
+		ID:        budget.UUID,
+		ProjectID: project.UUID,
 		Name:      budget.Name,
 	}
 

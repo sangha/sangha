@@ -9,6 +9,7 @@ import (
 // Budget represents the db schema of a budget
 type Budget struct {
 	ID             int64
+	UUID           string
 	ProjectID      int64
 	UserID         int64
 	ParentID       int64
@@ -17,15 +18,15 @@ type Budget struct {
 	PrivateBalance bool
 }
 
-// LoadBudgetByID loads a budget by ID from the database
-func (context *APIContext) LoadBudgetByID(id int64) (Budget, error) {
+// LoadBudgetByUUID loads a budget by UUID from the database
+func (context *APIContext) LoadBudgetByUUID(uuid string) (Budget, error) {
 	budget := Budget{}
-	if id < 1 {
+	if len(uuid) == 0 {
 		return budget, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE id = $1", id).
-		Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
+	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE uuid = $1", uuid).
+		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 	return budget, err
 }
 
@@ -36,13 +37,13 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 		return budget, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE project_id = $1 AND parent = 0", project.ID).
-		Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
+	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, private, private_balance FROM budgets WHERE project_uuid = $1 AND parent = 0", project.UUID).
+		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 	return budget, err
 }
 
-// GetBudgetByID returns a budget by ID from the cache
-func (context *APIContext) GetBudgetByID(id int64) (Budget, error) {
+// GetBudgetByUUID returns a budget by UUID from the cache
+func (context *APIContext) GetBudgetByUUID(id string) (Budget, error) {
 	budget := Budget{}
 	budgetsCache, err := budgetsCache.Value(id, context)
 	if err != nil {
@@ -57,7 +58,7 @@ func (context *APIContext) GetBudgetByID(id int64) (Budget, error) {
 func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 	budgets := []Budget{}
 
-	rows, err := context.Query("SELECT id, project_id, user_id, parent, name, private, private_balance FROM budgets")
+	rows, err := context.Query("SELECT id, uuid, project_id, user_id, parent, name, private, private_balance FROM budgets")
 	if err != nil {
 		return budgets, err
 	}
@@ -65,7 +66,7 @@ func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 	defer rows.Close()
 	for rows.Next() {
 		budget := Budget{}
-		err = rows.Scan(&budget.ID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
+		err = rows.Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Private, &budget.PrivateBalance)
 		if err != nil {
 			return budgets, err
 		}
@@ -84,15 +85,16 @@ func (budget *Budget) Update(context *APIContext) error {
 		panic(err)
 	}
 
-	budgetsCache.Delete(budget.ID)
+	budgetsCache.Delete(budget.UUID)
 	return err
 }
 
 // Save a budget to the database
 func (budget *Budget) Save(context *APIContext) error {
-	err := context.QueryRow("INSERT INTO budgets (project_id, user_id, parent, name, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
-		budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Private, budget.PrivateBalance).Scan(&budget.ID)
-	budgetsCache.Delete(budget.ID)
+	budget.UUID, _ = UUID()
+	err := context.QueryRow("INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		budget.UUID, budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Private, budget.PrivateBalance).Scan(&budget.ID)
+	budgetsCache.Delete(budget.UUID)
 	return err
 }
 

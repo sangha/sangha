@@ -2,7 +2,6 @@ package budgets
 
 import (
 	"net/http"
-	"strconv"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
@@ -35,19 +34,7 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 	resp := BudgetResponse{}
 	resp.Init(context)
 
-	pps := data.(*BudgetPutStruct)
-
-	id, err := strconv.Atoi(request.PathParameter("budget-id"))
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Invalid budget id",
-			"BudgetResource PUT"))
-		return
-	}
-
-	budget, err := context.(*db.APIContext).GetBudgetByID(int64(id))
+	budget, err := context.(*db.APIContext).GetBudgetByUUID(request.PathParameter("budget-id"))
 	if err != nil {
 		r.NotFound(request, response)
 		return
@@ -63,6 +50,7 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 			return
 		} */
 
+	pps := data.(*BudgetPutStruct)
 	budget.ProjectID = pps.Budget.ProjectID
 	budget.Name = pps.Budget.Name
 	budget.Private = pps.Budget.Private

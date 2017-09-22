@@ -1,8 +1,6 @@
 package budgets
 
 import (
-	"strconv"
-
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
@@ -38,12 +36,7 @@ func (r *BudgetResource) GetByIDs(context smolder.APIContext, request *restful.R
 	resp.Init(context)
 
 	for _, id := range ids {
-		iid, err := strconv.Atoi(id)
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
-		budget, err := context.(*db.APIContext).GetBudgetByID(int64(iid))
+		budget, err := context.(*db.APIContext).GetBudgetByUUID(id)
 		if err != nil {
 			r.NotFound(request, response)
 			return
