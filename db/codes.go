@@ -26,7 +26,7 @@ var (
 	ErrInvalidRatio = errors.New("Ratios contain non-numerical characters or don't add up to 100%")
 )
 
-// LoadCodeByID loads a code by ID from the database
+// LoadCodeByCode loads a code by Code from the database
 func (context *APIContext) LoadCodeByCode(c string) (Code, error) {
 	code := Code{}
 
@@ -47,7 +47,8 @@ func (context *APIContext) LoadCodeByID(id int64) (Code, error) {
 	return code, err
 }
 
-func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSlice, userID int64) (Code, error) {
+// LoadCodeByBudgetsAndRatios loads a code by budgetIDs and their ratios from the database
+func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSlice, userID string) (Code, error) {
 	code := Code{}
 	if len(budgetIDs) != len(ratios) {
 		return code, ErrInvalidBudgetRatioSet
@@ -67,15 +68,27 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 		return code, ErrInvalidRatio
 	}
 
+	var bids StringSlice
+	for _, bid := range budgetIDs {
+		budget, err := context.GetBudgetByUUID(bid)
+		if err != nil {
+			panic(err)
+		}
+		bids = append(bids, strconv.FormatInt(budget.ID, 10))
+	}
+
+	// user may be empty
+	user, _ := context.GetUserByUUID(userID)
+
 	// sort budgets & ratios
-	sort.Sort(BudgetSorter(BudgetRatioPair{budgetIDs, ratios}))
-	fmt.Println(budgetIDs)
+	sort.Sort(BudgetSorter(BudgetRatioPair{bids, ratios}))
+	fmt.Println(bids)
 	fmt.Println(ratios)
 
 	code = Code{
-		BudgetIDs: budgetIDs,
+		BudgetIDs: bids,
 		Ratios:    ratios,
-		UserID:    &userID,
+		UserID:    &user.ID,
 	}
 
 	codes, err := context.LoadAllCodes()
@@ -98,20 +111,20 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 		}
 	}
 
-	if userID > 0 {
-		err = context.QueryRow("SELECT id, code, budget_ids, ratios, user_id FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = $3", budgetIDs, ratios, userID).
+	if user.ID > 0 {
+		err = context.QueryRow("SELECT id, code, budget_ids, ratios, user_id FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id = $3", bids, ratios, user.ID).
 			Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
 	} else {
-		err = context.QueryRow("SELECT id, code, budget_ids, ratios FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id IS NULL", budgetIDs, ratios).
+		err = context.QueryRow("SELECT id, code, budget_ids, ratios FROM codes WHERE budget_ids = $1 AND ratios = $2 AND user_id IS NULL", bids, ratios).
 			Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios)
 	}
 	if err != nil {
-		if userID > 0 {
+		if user.ID > 0 {
 			err = context.QueryRow("INSERT INTO codes (code, budget_ids, ratios, user_id) VALUES ($1, $2, $3, $4) RETURNING id",
-				code.Code, budgetIDs, ratios, userID).Scan(&code.ID)
+				code.Code, code.BudgetIDs, code.Ratios, code.UserID).Scan(&code.ID)
 		} else {
 			err = context.QueryRow("INSERT INTO codes (code, budget_ids, ratios, user_id) VALUES ($1, $2, $3, null) RETURNING id",
-				code.Code, budgetIDs, ratios).Scan(&code.ID)
+				code.Code, code.BudgetIDs, code.Ratios).Scan(&code.ID)
 		}
 		codesCache.Delete(code.ID)
 	}
