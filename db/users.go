@@ -110,10 +110,10 @@ func (context *APIContext) LoadAllUsers() ([]User, error) {
 
 // Update a user in the database
 func (user *User) Update(context *APIContext) error {
-	_, err := context.Exec("UPDATE users SET about = $1, email = $2, address = $3, authtoken = $4 WHERE id = $5",
-		user.About, user.Email, user.Address, user.AuthToken, user.ID)
+	_, err := context.Exec("UPDATE users SET about = $1, email = $2, address = $3, zip = $4, city = $5, country = $6, authtoken = $7 WHERE id = $8",
+		user.About, user.Email, user.Address, user.ZIP, user.City, user.Country, user.AuthToken, user.ID)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	usersCache.Delete(user.UUID)
