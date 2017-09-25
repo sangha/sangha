@@ -50,33 +50,42 @@ func (r *UserResource) Post(context smolder.APIContext, data interface{}, reques
 		} */
 
 	ups := data.(*UserPostStruct)
-	_, err := context.(*db.APIContext).GetUserByEmail(ups.User.Email)
+	user, err := context.(*db.APIContext).GetUserByEmail(ups.User.Email)
 	if err == nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"A user with this email address already exists",
-			"UserResource POST"))
-		return
+		/*
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusBadRequest,
+				false,
+				"A user with this email address already exists",
+				"UserResource POST"))
+		*/
+
+		user.Address = ups.User.Address
+		user.ZIP = ups.User.ZIP
+		user.City = ups.User.City
+		user.Country = ups.User.Country
+
+		err = user.Update(context.(*db.APIContext))
+	} else {
+		if ups.User.About == "" {
+			ups.User.About = ups.User.Email
+		}
+		if ups.User.Nickname == "" {
+			ups.User.Nickname = ups.User.Email
+		}
+
+		user = db.User{
+			Nickname: ups.User.Nickname,
+			Email:    ups.User.Email,
+			About:    ups.User.About,
+			Address:  ups.User.Address,
+			ZIP:      ups.User.ZIP,
+			City:     ups.User.City,
+			Country:  ups.User.Country,
+		}
+		err = user.Save(context.(*db.APIContext))
 	}
 
-	if ups.User.About == "" {
-		ups.User.About = ups.User.Email
-	}
-	if ups.User.Nickname == "" {
-		ups.User.Nickname = ups.User.Email
-	}
-
-	user := db.User{
-		Nickname: ups.User.Nickname,
-		Email:    ups.User.Email,
-		About:    ups.User.About,
-		Address:  ups.User.Address,
-		ZIP:      ups.User.ZIP,
-		City:     ups.User.City,
-		Country:  ups.User.Country,
-	}
-	err = user.Save(context.(*db.APIContext))
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
