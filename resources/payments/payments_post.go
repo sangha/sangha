@@ -48,7 +48,7 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 	switch ups.Payment.Source {
 	case "bank_transfer":
 		payment.Amount = ups.Payment.Amount
-		payment.Code - ups.Payment.TransactionCode
+		payment.Code = ups.Payment.TransactionCode
 		payment.Source = ups.Payment.Source
 	case "paypal":
 		resp, err := http.Get(ctx.Config.Connections.PayPal + "/" + ups.Payment.SourceID)
