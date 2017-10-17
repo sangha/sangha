@@ -17,6 +17,7 @@ type User struct {
 	ZIP       string
 	City      string
 	Country   string
+	Avatar    string
 	Activated bool
 	AuthToken StringSlice
 }
@@ -29,6 +30,18 @@ func (context *APIContext) LoadUserByUUID(uuid string) (User, error) {
 	}
 
 	err := context.QueryRow("SELECT id, uuid, nickname, about, email, address, zip, city, country, activated FROM users WHERE uuid = $1", uuid).
+		Scan(&user.ID, &user.UUID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.ZIP, &user.City, &user.Country, &user.Activated)
+	return user, err
+}
+
+// LoadUserByID loads a user by ID from the database
+func (context *APIContext) LoadUserByID(id int64) (User, error) {
+	user := User{}
+	if id <= 0 {
+		return user, ErrInvalidID
+	}
+
+	err := context.QueryRow("SELECT id, uuid, nickname, about, email, address, zip, city, country, activated FROM users WHERE id = $1", id).
 		Scan(&user.ID, &user.UUID, &user.Nickname, &user.About, &user.Email, &user.Address, &user.ZIP, &user.City, &user.Country, &user.Activated)
 	return user, err
 }

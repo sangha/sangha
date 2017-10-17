@@ -133,6 +133,15 @@ func GetDatabase() *sql.DB {
 				  CONSTRAINT    uk_codes_budget_ids	UNIQUE (budget_ids, ratios, user_id),
 				  CONSTRAINT    fk_codes_user_id	FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 				)`,
+			`CREATE TABLE IF NOT EXISTS contributors
+				(
+				  id			bigserial 		PRIMARY KEY,
+				  user_id   	int,
+				  project_id   	int,
+				  CONSTRAINT    uk_contributors_user_project	UNIQUE (user_id, project_id),
+				  CONSTRAINT    fk_contributors_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
+				  CONSTRAINT    fk_contributors_project_id	FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+				)`,
 		}
 
 		// FIXME: add IF NOT EXISTS to CREATE INDEX statements (coming in v9.5)
@@ -151,6 +160,7 @@ func GetDatabase() *sql.DB {
 			`CREATE INDEX idx_transactions_budget_id ON transactions(budget_id)`,
 			`CREATE INDEX idx_transactions_from_budget_id ON transactions(from_budget_id)`,
 			`CREATE INDEX idx_transactions_created_at ON transactions(created_at)`,
+			`CREATE INDEX idx_contributors_project_id ON contributors(project_id)`,
 		}
 
 		for _, v := range tables {

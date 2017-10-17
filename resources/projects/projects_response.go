@@ -14,18 +14,24 @@ type ProjectResponse struct {
 	projects []db.Project
 }
 
+type contributorResponse struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+}
+
 type projectInfoResponse struct {
-	ID         string `json:"id"`
-	Slug       string `json:"slug"`
-	Name       string `json:"name"`
-	Summary    string `json:"summary"`
-	About      string `json:"about"`
-	Website    string `json:"website"`
-	License    string `json:"license"`
-	Repository string `json:"repository"`
-	Logo       string `json:"logo"`
-	RootBudget string `json:"budget_root"`
-	Activated  bool   `json:"activated"`
+	ID           string                `json:"id"`
+	Slug         string                `json:"slug"`
+	Name         string                `json:"name"`
+	Summary      string                `json:"summary"`
+	About        string                `json:"about"`
+	Website      string                `json:"website"`
+	License      string                `json:"license"`
+	Repository   string                `json:"repository"`
+	Logo         string                `json:"logo"`
+	RootBudget   string                `json:"budget_root"`
+	Contributors []contributorResponse `json:"contributors,omitempty"`
+	Activated    bool                  `json:"activated"`
 }
 
 // Init a new response
@@ -55,6 +61,7 @@ func (r *ProjectResponse) EmptyResponse() interface{} {
 }
 
 func prepareProjectResponse(context smolder.APIContext, project *db.Project) projectInfoResponse {
+	ctx := context.(*db.APIContext)
 	resp := projectInfoResponse{
 		ID:         project.UUID,
 		Slug:       project.Slug,
@@ -64,12 +71,21 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 		Website:    project.Website,
 		License:    project.License,
 		Repository: project.Repository,
-		Logo:       context.(*db.APIContext).BuildImageURL(project.Logo, project.Name),
+		Logo:       ctx.BuildImageURL(project.Logo, project.Name),
 		Activated:  project.Activated,
 	}
 
-	budget, _ := context.(*db.APIContext).LoadRootBudgetForProject(project)
+	budget, _ := ctx.LoadRootBudgetForProject(project)
 	resp.RootBudget = budget.UUID
+
+	contributors, _ := project.Contributors(ctx)
+	for _, contributor := range contributors {
+		cr := contributorResponse{
+			Name:   contributor.Nickname,
+			Avatar: contributor.Avatar,
+		}
+		resp.Contributors = append(resp.Contributors, cr)
+	}
 
 	return resp
 }

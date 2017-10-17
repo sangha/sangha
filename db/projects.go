@@ -114,3 +114,31 @@ func (project *Project) Save(context *APIContext) error {
 	projectsCache.Delete(project.UUID)
 	return err
 }
+
+// Contributors loads all contributors from the database
+func (project *Project) Contributors(context *APIContext) ([]User, error) {
+	users := []User{}
+
+	rows, err := context.Query("SELECT user_id FROM contributors WHERE project_id = $1", project.ID)
+	if err != nil {
+		return users, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var uid int64
+		err = rows.Scan(&uid)
+		if err != nil {
+			return users, err
+		}
+
+		user, err := context.LoadUserByID(uid)
+		if err != nil {
+			return users, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, err
+}
