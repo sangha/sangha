@@ -1,3 +1,6 @@
+--
+-- Projects
+--
 INSERT INTO projects
     (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
     VALUES (
@@ -66,4 +69,46 @@ INSERT INTO projects
     );
 INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_defg', 4, null, 0, 'beehive');
 
+INSERT INTO projects
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    VALUES (
+        5,
+        'efgh',
+        'mirageos',
+        'mirageos',
+        'MirageOS is a library operating system that constructs unikernels',
+        'MirageOS is a library operating system that constructs unikernels',
+        'https://github.com/mirage/mirage',
+        'ISC',
+        'https://github.com/mirage/mirage.git',
+        '',
+        now()
+    );
+INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_efgh', 5, null, 0, 'mirage');
+
+--
+-- Codes
+--
 INSERT INTO codes (code, budget_ids, ratios) VALUES ('ABCDEFGH', '{1,2}', '{66,34}');
+
+--
+-- Users
+--
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        1,
+        'mnop',
+        'muesli@gmail.com',
+        'muesli',
+        '',
+        ''
+    );
+
+--
+-- Contributors
+--
+INSERT INTO contributors (user_id, project_id) VALUES (1, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (1, 2);
+INSERT INTO contributors (user_id, project_id) VALUES (1, 3);
+INSERT INTO contributors (user_id, project_id) VALUES (1, 4);
