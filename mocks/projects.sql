@@ -102,7 +102,7 @@ INSERT INTO users
         'muesli@gmail.com',
         'muesli',
         '',
-        ''
+        '{}'
     );
 
 --
