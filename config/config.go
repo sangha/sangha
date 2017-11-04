@@ -116,6 +116,9 @@ func (c *PostgreSQLConnection) Marshal() string {
 		case string:
 			fieldValue = f
 		case int:
+			if f == 0 {
+				continue
+			}
 			fieldValue = strconv.Itoa(f)
 		}
 		fieldType := val.Type().Field(i).Name
