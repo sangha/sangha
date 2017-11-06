@@ -3,7 +3,7 @@ Description=sangha daemon
 After=network.target
 
 [Service]
-ExecStart=/home/sangha/go/bin/sangha
+ExecStart=/home/sangha/go/bin/sangha serve
 User=sangha
 Group=users
 RestartSec=5

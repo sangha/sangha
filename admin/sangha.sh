@@ -29,7 +29,7 @@ test -x $BINARY || exit 0
 case "$1" in
   start)
         log_daemon_msg "Starting sangha daemon" "sangha" || true
-        if start-stop-daemon --start -b --quiet --oknodo -m --pidfile $PIDFILE --exec $BINARY ; then
+        if start-stop-daemon --start -b --quiet --oknodo -m --pidfile $PIDFILE --exec $BINARY serve ; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
@@ -46,7 +46,7 @@ case "$1" in
 
   reload|force-reload)
         log_daemon_msg "Reloading sangha daemon's configuration" "sangha" || true
-        if start-stop-daemon --stop --signal 1 --quiet --oknodo --pidfile $PIDFILE --exec $BINARY ; then
+        if start-stop-daemon --stop --signal 1 --quiet --oknodo --pidfile $PIDFILE --exec $BINARY serve ; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
@@ -56,7 +56,7 @@ case "$1" in
   restart)
         log_daemon_msg "Restarting sangha daemon" "sangha" || true
         start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
-        if start-stop-daemon --start -b --quiet --oknodo -m --pidfile $PIDFILE --exec $BINARY ; then
+        if start-stop-daemon --start -b --quiet --oknodo -m --pidfile $PIDFILE --exec $BINARY serve ; then
             log_end_msg 0 || true
         else
             log_end_msg 1 || true
