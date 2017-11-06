@@ -47,6 +47,7 @@ func GetDatabase() *sql.DB {
 	return pgDB
 }
 
+// InitDatabase sets up the database with all required tables and indexes
 func InitDatabase() {
 	tables := []string{
 		`CREATE TABLE IF NOT EXISTS users

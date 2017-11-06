@@ -98,6 +98,7 @@ func (budget *Budget) Save(context *APIContext) error {
 	return err
 }
 
+// Balance returns this budget's total balance
 func (budget *Budget) Balance(context *APIContext) (float64, error) {
 	var val float64
 	err := context.QueryRow("SELECT SUM(value) FROM transactions WHERE budget_id = $1", budget.ID).
@@ -105,24 +106,27 @@ func (budget *Budget) Balance(context *APIContext) (float64, error) {
 	return val, err
 }
 
+// BudgetRatioPair represents a pair of budgets and ratios
 type BudgetRatioPair struct {
-	budget_ids []string
-	ratios     []string
+	budgetIDs []string
+	ratios    []string
 }
+
+// BudgetSorter is used to sort the pair by ratio
 type BudgetSorter BudgetRatioPair
 
 func (a BudgetSorter) Len() int {
-	return len(a.budget_ids)
+	return len(a.budgetIDs)
 }
 
 func (a BudgetSorter) Swap(i, j int) {
-	a.budget_ids[i], a.budget_ids[j] = a.budget_ids[j], a.budget_ids[i]
+	a.budgetIDs[i], a.budgetIDs[j] = a.budgetIDs[j], a.budgetIDs[i]
 	a.ratios[i], a.ratios[j] = a.ratios[j], a.ratios[i]
 }
 
 func (a BudgetSorter) Less(i, j int) bool {
-	in, _ := strconv.Atoi(a.budget_ids[i])
-	jn, _ := strconv.Atoi(a.budget_ids[j])
+	in, _ := strconv.Atoi(a.budgetIDs[i])
+	jn, _ := strconv.Atoi(a.budgetIDs[j])
 	return in < jn
 }
 
