@@ -82,7 +82,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 	for _, contributor := range contributors {
 		cr := contributorResponse{
 			Name:   contributor.Nickname,
-			Avatar: contributor.Avatar,
+			Avatar: ctx.BuildImageURL(contributor.Avatar, contributor.Nickname),
 		}
 		resp.Contributors = append(resp.Contributors, cr)
 	}
