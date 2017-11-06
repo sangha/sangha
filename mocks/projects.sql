@@ -117,7 +117,7 @@ INSERT INTO users
         'muesli@gmail.com',
         'muesli',
         '',
-        '{}'
+        '{9fec2b9fb02e2ec6e9c68351a3bb0c51}'
     );
 
 --
