@@ -83,15 +83,20 @@ func (r *CodeResource) Get(context smolder.APIContext, request *restful.Request,
 
 		resp.AddCode(&code)
 	} else {
-		codes, err := context.(*db.APIContext).LoadAllCodes()
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
+		/*
+			codes, err := context.(*db.APIContext).LoadAllCodes()
+			if err != nil {
+				r.NotFound(request, response)
+				return
+			}
 
-		for _, code := range codes {
-			resp.AddCode(&code)
-		}
+			for _, code := range codes {
+				resp.AddCode(&code)
+			}
+		*/
+
+		r.NotFound(request, response)
+		return
 	}
 
 	resp.Send(response)
