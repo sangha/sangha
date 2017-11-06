@@ -2,7 +2,7 @@
 -- Projects
 --
 INSERT INTO projects
-    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
     VALUES (
         1,
         'abcd',
@@ -14,12 +14,15 @@ INSERT INTO projects
         'MIT',
         'https://github.com/muesli/toktok.git',
         '',
-        now()
+        now(),
+        false,
+        false,
+        true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_abcd', 1, null, 0, 'toktok');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_abcd', 1, null, 0, 'toktok', false, false);
 
 INSERT INTO projects
-    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
     VALUES (
         2,
         'bcde',
@@ -31,12 +34,15 @@ INSERT INTO projects
         'FOSS',
         'https://github.com/muesli/cache2go.git',
         '',
-        now()
+        now(),
+        false,
+        false,
+        true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_bcde', 2, null, 0, 'cache2go');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_bcde', 2, null, 0, 'cache2go', false, false);
 
 INSERT INTO projects
-    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
     VALUES (
         3,
         'cdef',
@@ -48,12 +54,15 @@ INSERT INTO projects
         'AGPL',
         'https://github.com/muesli/smolder.git',
         '',
-        now()
+        now(),
+        false,
+        false,
+        true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_cdef', 3, null, 0, 'smolder');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_cdef', 3, null, 0, 'smolder', false, false);
 
 INSERT INTO projects
-    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
     VALUES (
         4,
         'defg',
@@ -65,12 +74,15 @@ INSERT INTO projects
         'AGPL',
         'https://github.com/muesli/beehive.git',
         '',
-        now()
+        now(),
+        false,
+        false,
+        true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_defg', 4, null, 0, 'beehive');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_defg', 4, null, 0, 'beehive', false, false);
 
 INSERT INTO projects
-    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at)
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
     VALUES (
         5,
         'efgh',
@@ -82,9 +94,12 @@ INSERT INTO projects
         'ISC',
         'https://github.com/mirage/mirage.git',
         '',
-        now()
+        now(),
+        false,
+        false,
+        true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name) VALUES ('b_efgh', 5, null, 0, 'mirage');
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_efgh', 5, null, 0, 'mirage', false, false);
 
 --
 -- Codes
