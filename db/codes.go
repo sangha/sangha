@@ -2,12 +2,10 @@ package db
 
 import (
 	"errors"
-	"fmt"
-	"math/rand"
 	"sort"
 	"strconv"
 
-	"github.com/xrash/smetrics"
+	"github.com/muesli/toktok"
 )
 
 // Code represents the db schema of a code
@@ -82,8 +80,6 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 
 	// sort budgets & ratios
 	sort.Sort(BudgetSorter(BudgetRatioPair{bids, ratios}))
-	fmt.Println(bids)
-	fmt.Println(ratios)
 
 	code = Code{
 		BudgetIDs: bids,
@@ -95,20 +91,17 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 	if err != nil {
 		panic(err)
 	}
-	for {
-		code.Code = GenerateToken(8)
+	tokens := []string{}
+	for _, code := range codes {
+		tokens = append(tokens, code.Code)
+	}
 
-		dupe := false
-		for _, c := range codes {
-			if hd := smetrics.WagnerFischer(c.Code, code.Code, 1, 1, 2); hd <= 8 {
-				fmt.Printf("%s is too similar to existing code %s (distance %d)\n", code.Code, c.Code, hd)
-				dupe = true
-				break
-			}
-		}
-		if !dupe {
-			break
-		}
+	// FIXME: we want to populate the bucket at startup
+	bucket, _ := toktok.NewBucket(8)
+	bucket.LoadTokens(tokens)
+	code.Code, err = bucket.NewToken(8)
+	if err != nil {
+		return code, err
 	}
 
 	if user.ID > 0 {
@@ -176,20 +169,3 @@ func (code *Code) Save(context *APIContext) error {
 	return err
 }
 */
-
-func GenerateToken(n int) string {
-	var letterRunes = []rune("ABCDEFGHKLMNRSTWX3459")
-	b := make([]rune, n)
-	for i := range b {
-		var lastrune rune
-		if i > 0 {
-			lastrune = b[i-1]
-		}
-		b[i] = lastrune
-		for lastrune == b[i] {
-			b[i] = letterRunes[rand.Intn(len(letterRunes))]
-		}
-	}
-
-	return string(b)
-}
