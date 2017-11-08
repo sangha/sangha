@@ -119,11 +119,132 @@ INSERT INTO users
         '',
         '{9fec2b9fb02e2ec6e9c68351a3bb0c51}'
     );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        2,
+        'nopq',
+        'user2@gmail.com',
+        'user2',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        3,
+        'opqr',
+        'user3@gmail.com',
+        'user3',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        4,
+        'pqrs',
+        'user4@gmail.com',
+        'user4',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        5,
+        'qrst',
+        'user5@gmail.com',
+        'user5',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        6,
+        'rstu',
+        'user6@gmail.com',
+        'user6',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        7,
+        'stuv',
+        'user7@gmail.com',
+        'user7',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        8,
+        'tuvw',
+        'user8@gmail.com',
+        'user8',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        9,
+        'uvwx',
+        'user9@gmail.com',
+        'user9',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        10,
+        'vwxy',
+        'user10@gmail.com',
+        'user10',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        11,
+        'wxyz',
+        'user11@gmail.com',
+        'user11',
+        '',
+        '{}'
+    );
+INSERT INTO users
+    (id, uuid, email, nickname, password, authtoken)
+    VALUES (
+        12,
+        'xyza',
+        'user12@gmail.com',
+        'user12',
+        '',
+        '{}'
+    );
 
 --
 -- Contributors
 --
 INSERT INTO contributors (user_id, project_id) VALUES (1, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (2, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (3, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (4, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (5, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (6, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (7, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (8, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (9, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (10, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (11, 1);
+INSERT INTO contributors (user_id, project_id) VALUES (12, 1);
 INSERT INTO contributors (user_id, project_id) VALUES (1, 2);
 INSERT INTO contributors (user_id, project_id) VALUES (1, 3);
 INSERT INTO contributors (user_id, project_id) VALUES (1, 4);
