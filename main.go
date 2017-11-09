@@ -26,7 +26,9 @@ var (
 
 func main() {
 	config.ParseSettings()
-	logger.SetupLogger("tcp", "10.0.3.244:5514", "sangha")
+	logger.SetupLogger(config.Settings.Connections.Logger.Protocol,
+		config.Settings.Connections.Logger.Address,
+		"sangha")
 
 	log.Infoln("Starting sangha")
 

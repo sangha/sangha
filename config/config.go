@@ -24,8 +24,10 @@ type Data struct {
 	}
 
 	Connections struct {
+		Logger               LoggerConnection
 		PostgreSQLConnection PostgreSQLConnection
 		AMQPConnection       AMQPConnection
+		Email                EmailConfig
 		PayPal               string
 	}
 
@@ -36,9 +38,41 @@ type Data struct {
 		}
 	}
 
+	EmailTemplates Templates
+
 	Web struct {
 		BaseURL string
 	}
+}
+
+// EmailConfig contains all email settings
+type EmailConfig struct {
+	AdminEmail string
+	ReplyTo    string
+	SMTP       struct {
+		User     string
+		Password string
+		Server   string
+		Port     int
+	}
+}
+
+// EmailTemplate holds all values of one email template
+type EmailTemplate struct {
+	Subject string
+	Text    string
+	HTML    string
+}
+
+// Templates holds all email templates
+type Templates struct {
+	PaymentConfirmation EmailTemplate
+}
+
+// LoggerConnection contains all of the logger settings
+type LoggerConnection struct {
+	Protocol string
+	Address  string
 }
 
 // PostgreSQLConnection contains all of the db configuration values
