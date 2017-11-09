@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log/syslog"
 	"os"
 
 	"gitlab.techcultivation.org/sangha/sangha/config"
 	"gitlab.techcultivation.org/sangha/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/logger"
 
 	log "github.com/sirupsen/logrus"
-	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 	"github.com/spf13/cobra"
 )
 
@@ -27,13 +26,8 @@ var (
 
 func main() {
 	config.ParseSettings()
+	logger.SetupLogger("tcp", "10.0.3.244:5514", "sangha")
 
-	hook, err := lSyslog.NewSyslogHook("tcp", "10.0.3.244:5514", syslog.LOG_INFO, "sangha")
-	if err != nil {
-		fmt.Printf("Error initializing logger: %v\n", err)
-	} else {
-		log.AddHook(hook)
-	}
 	log.Infoln("Starting sangha")
 
 	db.SetupPostgres(config.Settings.Connections.PostgreSQLConnection)
