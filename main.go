@@ -8,7 +8,7 @@ import (
 	"gitlab.techcultivation.org/sangha/sangha/config"
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 	"github.com/spf13/cobra"
 )
@@ -28,12 +28,11 @@ var (
 func main() {
 	config.ParseSettings()
 
-	log := logrus.New()
 	hook, err := lSyslog.NewSyslogHook("tcp", "10.0.3.244:5514", syslog.LOG_INFO, "sangha")
 	if err != nil {
 		fmt.Printf("Error initializing logger: %v\n", err)
 	} else {
-		log.Hooks.Add(hook)
+		log.AddHook(hook)
 	}
 	log.Infoln("Starting sangha")
 
