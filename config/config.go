@@ -24,11 +24,11 @@ type Data struct {
 	}
 
 	Connections struct {
-		Logger               LoggerConnection
-		PostgreSQLConnection PostgreSQLConnection
-		AMQPConnection       AMQPConnection
-		Email                EmailConfig
-		PayPal               string
+		Logger     LoggerConnection
+		PostgreSQL PostgreSQLConnection
+		AMQP       AMQPConnection
+		Email      EmailConfig
+		PayPal     string
 	}
 
 	PaymentProviders struct {

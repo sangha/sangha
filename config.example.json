@@ -16,7 +16,7 @@
       "Address": "127.0.0.1:5514"
     },
 
-    "PostgreSQLConnection": {
+    "PostgreSQL": {
       "Host": "localhost",
       "DbName": "sangha",
       "User": "user",
@@ -25,7 +25,7 @@
       "SslMode": "disable"
     },
 
-    "AMQPConnection": {
+    "AMQP": {
       "Host": "localhost",
       "User": "user",
       "Password": "password",

@@ -32,7 +32,7 @@ func main() {
 
 	log.Infoln("Starting sangha")
 
-	db.SetupPostgres(config.Settings.Connections.PostgreSQLConnection)
+	db.SetupPostgres(config.Settings.Connections.PostgreSQL)
 
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
