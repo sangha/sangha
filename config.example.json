@@ -1,38 +1,54 @@
 {
-    "API": {
-        "BaseURL": "http://localhost:9991",
-        "PathPrefix": "v1/",
-        "Bind": ":9991",
+  "API": {
+    "BaseURL": "http://localhost:9991",
+    "PathPrefix": "v1/",
+    "Bind": ":9991",
 
-        "SwaggerAPIPath": "/apidocs.json",
-        "SwaggerPath": "/apidocs/",
-        "SwaggerFilePath": "/home/ubuntu/swagger-ui/dist",
-        "ImageFilePath": "/home/ubuntu/sangha_images"
+    "SwaggerAPIPath": "/apidocs.json",
+    "SwaggerPath": "/apidocs/",
+    "SwaggerFilePath": "/home/ubuntu/swagger-ui/dist",
+    "ImageFilePath": "/home/ubuntu/sangha_images"
+  },
+
+  "Connections": {
+    "Logger": {
+      "Protocol": "tcp",
+      "Address": "127.0.0.1:5514"
     },
 
-    "Connections": {
-        "PostgreSQLConnection": {
-            "Host": "localhost",
-            "DbName": "sangha",
-            "User": "user",
-            "Password": "password",
-            "Port": 5432,
-            "SslMode": "disable"
-        },
-
-        "AMQPConnection": {
-            "Host": "localhost",
-            "User": "user",
-            "Password": "password",
-            "Port": 5672,
-            "Broker": "rabbit",
-            "Queue": "payments"
-        },
-
-        "PayPal": "http://localhost:9801"
+    "PostgreSQLConnection": {
+      "Host": "localhost",
+      "DbName": "sangha",
+      "User": "user",
+      "Password": "password",
+      "Port": 5432,
+      "SslMode": "disable"
     },
 
-    "Web": {
-        "BaseURL": "http://localhost:4200/"
-    }
+    "AMQPConnection": {
+      "Host": "localhost",
+      "User": "user",
+      "Password": "password",
+      "Port": 5672,
+      "Broker": "rabbit",
+      "Queue": "payments"
+    },
+
+    "Email": {
+      "AdminEmail": "admin@domain.tld",
+      "ReplyTo": "no-reply@domain.tld",
+      "SMTP": {
+        "User": "user@domain.tld",
+        "Password": "password",
+        "Server": "smtp.domain.tld",
+        "Port": 587
+      }
+    },
+
+    "PayPal": "http://localhost:9801"
+  },
+
+  "Web": {
+    "BaseURL": "http://localhost:4200/"
+  }
 }
