@@ -153,7 +153,7 @@ func (user *User) Save(context *APIContext) error {
 		return err
 	}
 
-	user.UUID, _ = UUID()
+	user.UUID = uuid
 	user.AuthToken = StringSlice{uuid}
 	err = context.QueryRow("INSERT INTO users (uuid, nickname, password, about, address, zip, city, country, email, authtoken) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id",
 		user.UUID, user.Nickname, uuid, user.About, user.Address, user.ZIP, user.City, user.Country, user.Email, user.AuthToken).Scan(&user.ID)
