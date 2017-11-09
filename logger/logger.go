@@ -6,7 +6,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 func SetupLogger(protocol, host, app string) {
@@ -19,5 +18,5 @@ func SetupLogger(protocol, host, app string) {
 }
 
 func init() {
-	log.SetFormatter(&prefixed.TextFormatter{})
+	log.SetFormatter(&log.JSONFormatter{})
 }
