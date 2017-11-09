@@ -29,12 +29,13 @@ func main() {
 	config.ParseSettings()
 
 	log := logrus.New()
-	hook, err := lSyslog.NewSyslogHook("tcp", "10.0.3.216:5514", syslog.LOG_INFO, "sangha")
+	hook, err := lSyslog.NewSyslogHook("tcp", "10.0.3.244:5514", syslog.LOG_INFO, "sangha")
 	if err != nil {
 		fmt.Printf("Error initializing logger: %v\n", err)
 	} else {
 		log.Hooks.Add(hook)
 	}
+	log.Infoln("Starting sangha")
 
 	db.SetupPostgres(config.Settings.Connections.PostgreSQLConnection)
 
