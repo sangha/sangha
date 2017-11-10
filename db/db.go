@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	pgDB   *sql.DB
-	pgConn config.PostgreSQLConnection
+	pgDB     *sql.DB
+	pgConfig config.PostgreSQLConnection
 
 	projectsCache = cache2go.Cache("project")
 	budgetsCache  = cache2go.Cache("budget")
@@ -29,7 +29,7 @@ var (
 
 // SetupPostgres sets the db configuration
 func SetupPostgres(pc config.PostgreSQLConnection) {
-	pgConn = pc
+	pgConfig = pc
 }
 
 // GetDatabase connects to the database on first run and returns the existing
@@ -37,7 +37,7 @@ func SetupPostgres(pc config.PostgreSQLConnection) {
 func GetDatabase() *sql.DB {
 	if pgDB == nil {
 		var err error
-		pgDB, err = sql.Open("postgres", pgConn.Marshal())
+		pgDB, err = sql.Open("postgres", pgConfig.Marshal())
 		if err != nil {
 			panic(err)
 		}
