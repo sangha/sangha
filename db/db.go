@@ -105,7 +105,7 @@ func InitDatabase() {
 			(
 			  id          			bigserial 		PRIMARY KEY,
 			  user_id				bigserial	   	NOT NULL,
-			  amount				numeric(12,4)	NOT NULL,
+			  amount				int				NOT NULL,
 			  currency				text			NOT NULL,
 			  code					text,
 			  description			text,
@@ -122,7 +122,7 @@ func InitDatabase() {
 			  budget_id			bigserial   	NOT NULL,
 			  from_budget_id	int,
 			  to_budget_id		int,
-			  amount			numeric(12,4)	NOT NULL,
+			  amount			int				NOT NULL,
 			  created_at		timestamp		NOT NULL,
 			  CONSTRAINT    	fk_transactions_budget_id		FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
 			  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,

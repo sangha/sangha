@@ -1,12 +1,14 @@
 package db
 
-import "time"
+import (
+	"time"
+)
 
 // Payment represents the db schema of a payment
 type Payment struct {
 	ID                  int64
 	UserID              int64
-	Amount              float64
+	Amount              int64
 	Currency            string
 	Code                string
 	Description         string

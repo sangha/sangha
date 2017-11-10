@@ -19,7 +19,7 @@ type PaymentResponse struct {
 type paymentInfoResponse struct {
 	ID                  int64     `json:"id"`
 	UserID              int64     `json:"user_id"`
-	Amount              float64   `json:"amount"`
+	Amount              int64     `json:"amount"`
 	Currency            string    `json:"currency"`
 	Code                string    `json:"code"`
 	Description         string    `json:"description"`

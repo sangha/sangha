@@ -17,10 +17,10 @@ import (
 // PaymentPostStruct holds all values of an incoming POST request
 type PaymentPostStruct struct {
 	Payment struct {
-		Source          string  `json:"source"`
-		SourceID        string  `json:"source_id"`
-		Amount          float64 `json:"amount"`
-		TransactionCode string  `json:"transaction_code"`
+		Source          string `json:"source"`
+		SourceID        string `json:"source_id"`
+		Amount          int64  `json:"amount"`
+		TransactionCode string `json:"transaction_code"`
 	} `json:"payment"`
 }
 
@@ -48,7 +48,7 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 	payments := struct {
 		Payments []struct {
 			UserID              int64     `json:"user_id"`
-			Amount              float64   `json:"amount"`
+			Amount              int64     `json:"amount"`
 			Currency            string    `json:"currency"`
 			Code                string    `json:"code"`
 			Description         string    `json:"description"`
