@@ -41,7 +41,6 @@ func GetDatabase() *sql.DB {
 		if err != nil {
 			panic(err)
 		}
-
 	}
 
 	return pgDB
