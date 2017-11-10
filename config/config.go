@@ -92,6 +92,7 @@ type AMQPConnection struct {
 	Host     string
 	Port     int
 	Broker   string
+	Exchange string
 	Queue    string
 }
 
