@@ -8,7 +8,12 @@ import (
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 )
 
+// SetupLogger initializes logrus
 func SetupLogger(protocol, host, app string) {
+	if len(protocol) == 0 {
+		return
+	}
+
 	hook, err := lSyslog.NewSyslogHook(protocol, host, syslog.LOG_INFO, app)
 	if err != nil {
 		fmt.Printf("Error initializing logger: %v\n", err)
