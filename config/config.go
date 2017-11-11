@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"reflect"
 	"strconv"
@@ -102,32 +101,22 @@ var (
 )
 
 // ParseSettings parses the config file
-func ParseSettings() {
-	logLevelStr := flag.String("loglevel", "info", "Log level")
-	configFile := flag.String("configfile", "config.json", "config file in the JSON format")
-	flag.Parse()
-
-	logLevel, err := log.ParseLevel(*logLevelStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.SetLevel(logLevel)
-
-	if configFile == nil || len(*configFile) == 0 {
+func ParseSettings(configFile string) {
+	if len(configFile) == 0 {
 		log.Panic(errors.New("Did not get a config file passed in"))
 	}
-	log.WithField("File", *configFile).Info("Using config file")
+	log.WithField("File", configFile).Info("Using config file")
 
 	// Parse config file
 	configData := Data{}
-	handler := NewHandler(*configFile, &configData, nil)
+	handler := NewHandler(configFile, &configData, nil)
 	if handler == nil {
 		log.Fatal(errors.New("Config handler is nil, cannot continue"))
 	}
 	if !handler.LastReadValid() {
 		log.WithField(
 			"File",
-			*configFile,
+			configFile,
 		).Fatal(errors.New("Did not get a valid config file"))
 	}
 

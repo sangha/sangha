@@ -25,7 +25,17 @@ var (
 )
 
 func main() {
-	config.ParseSettings()
+	var configFile, logLevelStr string
+	RootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "config.json", "use this config file (JSON format)")
+	RootCmd.PersistentFlags().StringVarP(&logLevelStr, "loglevel", "l", "info", "log level")
+
+	logLevel, err := log.ParseLevel(logLevelStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetLevel(logLevel)
+
+	config.ParseSettings(configFile)
 	logger.SetupLogger(config.Settings.Connections.Logger.Protocol,
 		config.Settings.Connections.Logger.Address,
 		"sangha")
