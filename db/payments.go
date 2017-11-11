@@ -19,8 +19,6 @@ type Payment struct {
 	CreatedAt           time.Time
 }
 
-var ()
-
 // LoadPaymentByID loads a payment by ID from the database
 func (context *APIContext) LoadPaymentByID(id int64) (Payment, error) {
 	payment := Payment{}

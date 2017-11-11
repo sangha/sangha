@@ -27,7 +27,7 @@ var (
 	usersCache    = cache2go.Cache("user")
 
 	// ErrInvalidID is the error returned when encountering an invalid database ID
-	ErrInvalidID = errors.New("Invalid id")
+	ErrInvalidID = errors.New("Invalid ID")
 )
 
 // SetupPostgres sets the db configuration

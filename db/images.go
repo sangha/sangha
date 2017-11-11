@@ -9,10 +9,12 @@ import (
 	"path/filepath"
 )
 
+// LoadImage reads an image from disk
 func (context *APIContext) LoadImage(id string) ([]byte, error) {
 	return ioutil.ReadFile(filepath.Join(context.Config.API.ImageFilePath, id))
 }
 
+// StoreImage writes an image to disk and returns the hashsum
 func (context *APIContext) StoreImage(logo []byte) (string, error) {
 	sha := sha1.New()
 	sha.Write([]byte(logo))
@@ -25,6 +27,7 @@ func (context *APIContext) StoreImage(logo []byte) (string, error) {
 	return shasum, nil
 }
 
+// BuildImageURL returns the canonical URL for an image
 func (context *APIContext) BuildImageURL(id string, placeholder string) string {
 	u, _ := url.Parse(context.Config.Web.BaseURL)
 
