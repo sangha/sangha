@@ -15,6 +15,9 @@ import (
 )
 
 var (
+	// SchemaVersion needs to be incremented every time the SQL schema changes
+	SchemaVersion = 1
+
 	pgDB     *sql.DB
 	pgConfig config.PostgreSQLConnection
 
@@ -49,6 +52,11 @@ func GetDatabase() *sql.DB {
 // InitDatabase sets up the database with all required tables and indexes
 func InitDatabase() {
 	tables := []string{
+		`CREATE TABLE IF NOT EXISTS config
+			(
+			  name		text	PRIMARY KEY,
+			  value		text
+			)`,
 		`CREATE TABLE IF NOT EXISTS users
 			(
 			  id          	bigserial 	PRIMARY KEY,
@@ -187,37 +195,28 @@ func InitDatabase() {
 
 // WipeDatabase drops all database tables - use carefully!
 func WipeDatabase() {
-	// Commented out to prevent accidental usage
+	drops := []string{
+		`DROP TABLE codes`,
+		`DROP TABLE contributors`,
+		`DROP TABLE payments`,
+		`DROP TABLE transactions`,
+		`DROP TABLE budgets`,
+		`DROP TABLE projects`,
+		`DROP TABLE users`,
+	}
 
-	/*
-		drops := []string{
-			`DROP TABLE codes`,
-			`DROP TABLE contributors`,
-			`DROP TABLE payments`,
-			`DROP TABLE transactions`,
-			`DROP TABLE budgets`,
-			`DROP TABLE projects`,
-			`DROP TABLE users`,
+	for _, v := range drops {
+		fmt.Println("Dropping table:", v)
+		_, err := pgDB.Exec(v)
+		if err != nil {
+			panic(err)
 		}
-
-		for _, v := range drops {
-			fmt.Println("Dropping table:", v)
-			_, err := pgDB.Exec(v)
-			if err != nil {
-				panic(err)
-			}
-		}
-	*/
+	}
 }
 
-func init() {
-	// fmt.Println("db.init")
-	initCaches()
-
-	negativeInf := time.Time{}
-	positiveInf, _ := time.Parse("2006", "3000")
-
-	pq.EnableInfinityTs(negativeInf, positiveInf)
+// FIXME
+func migrateDatabase(from, to int) error {
+	return nil
 }
 
 // UUID returns a new unique identifier
@@ -323,4 +322,13 @@ func initCaches() {
 		fmt.Println("Got no APIContext passed in")
 		return nil
 	})
+}
+
+func init() {
+	initCaches()
+
+	negativeInf := time.Time{}
+	positiveInf, _ := time.Parse("2006", "3000")
+
+	pq.EnableInfinityTs(negativeInf, positiveInf)
 }
