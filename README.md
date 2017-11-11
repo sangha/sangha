@@ -26,4 +26,6 @@ vim config.json
 
 ### Reference
 
+![Sangha Service Topology](topology.svg)
+
 Visit the API docs: http://localhost:9991/apidocs/
