@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"gitlab.techcultivation.org/sangha/sangha/config"
@@ -45,7 +44,6 @@ func main() {
 	db.SetupPostgres(config.Settings.Connections.PostgreSQL)
 
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(-1)
 	}
 }
