@@ -86,11 +86,11 @@ INSERT INTO projects
     VALUES (
         5,
         'efgh',
-        'mirageos',
-        'mirageos',
-        'MirageOS is a library operating system that constructs unikernels',
-        'MirageOS is a library operating system that constructs unikernels',
-        'https://github.com/mirage/mirage',
+        'robur',
+        'robur',
+        'At robur, we build performant bespoke minimal operating systems for high-assurance services',
+        'At robur, we build performant bespoke minimal operating systems for high-assurance services',
+        'http://robur.io',
         'ISC',
         'https://github.com/mirage/mirage.git',
         '',
@@ -99,7 +99,27 @@ INSERT INTO projects
         false,
         true
     );
-INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_efgh', 5, null, 0, 'mirage', false, false);
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_efgh', 5, null, 0, 'robur', false, false);
+
+INSERT INTO projects
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
+    VALUES (
+        6,
+        'fghi',
+        'cct',
+        'CCT',
+        'The Center for the Cultivation of Technology',
+        'The Center for the Cultivation of Technology is a charitable non-profit host organization for international Free Software projects',
+        'https://techcultivation.org',
+        'AGPL',
+        'https://gitlab.techcultivation.org',
+        '',
+        now(),
+        false,
+        false,
+        true
+    );
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_fghi', 6, null, 0, 'cct', false, false);
 
 --
 -- Codes
