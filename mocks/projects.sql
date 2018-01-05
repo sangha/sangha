@@ -121,6 +121,26 @@ INSERT INTO projects
     );
 INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_fghi', 6, null, 0, 'cct', false, false);
 
+INSERT INTO projects
+    (id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, activated)
+    VALUES (
+        7,
+        'ghij',
+        'sangha',
+        'sangha',
+        'sangha',
+        'The Center for the Cultivation of Technology is a charitable non-profit host organization for international Free Software projects',
+        'https://gitlab.techcultivation.org/sangha/sangha',
+        'AGPL',
+        'https://gitlab.techcultivation.org/sangha/sangha',
+        '',
+        now(),
+        false,
+        false,
+        true
+    );
+INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ('b_ghij', 7, null, 0, 'sangha', false, false);
+
 --
 -- Codes
 --
