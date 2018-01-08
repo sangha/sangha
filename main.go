@@ -39,7 +39,7 @@ func main() {
 		config.Settings.Connections.Logger.Address,
 		"sangha")
 
-	log.Infoln("Starting sangha API")
+	log.Infoln("Starting sangha JSON API")
 
 	db.SetupPostgres(config.Settings.Connections.PostgreSQL)
 
