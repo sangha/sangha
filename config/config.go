@@ -28,12 +28,17 @@ type Data struct {
 		AMQP       AMQPConnection
 		Email      EmailConfig
 		PayPal     string
+		Stripe     string
 	}
 
 	PaymentProviders struct {
 		PayPal struct {
 			ClientID string
 			Secret   string
+		}
+		Stripe struct {
+			Key    string
+			Secret string
 		}
 	}
 

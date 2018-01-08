@@ -46,7 +46,8 @@
       }
     },
 
-    "PayPal": "http://localhost:9801"
+    "PayPal": "http://localhost:9801",
+    "Stripe": "http://localhost:9802"
   },
 
   "Web": {
