@@ -8,7 +8,7 @@ import (
 	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 )
 
-// SetupLogger initializes logrus
+// SetupLogger initializes logrus with an optional rsyslog server
 func SetupLogger(protocol, host, app string) {
 	if len(protocol) == 0 {
 		return
