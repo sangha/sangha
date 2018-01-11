@@ -40,6 +40,13 @@ type Data struct {
 			Key    string
 			Secret string
 		}
+		Hbci struct {
+			Name     string
+			UserId   string
+			BankCode string
+			Pin      string
+			Url      string
+		}
 	}
 
 	EmailTemplates Templates
