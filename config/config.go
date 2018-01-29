@@ -42,10 +42,10 @@ type Data struct {
 		}
 		Hbci struct {
 			Name     string
-			UserId   string
+			UserID   string
 			BankCode string
 			Pin      string
-			Url      string
+			URL      string
 		}
 	}
 
