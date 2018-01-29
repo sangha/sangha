@@ -47,6 +47,10 @@ type Data struct {
 			Pin      string
 			URL      string
 		}
+		Bitpay struct {
+			Pem string
+			URL string
+		}
 	}
 
 	EmailTemplates Templates
