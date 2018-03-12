@@ -105,6 +105,46 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 		payment.SourcePayerID = payments.Payments[0].SourcePayerID
 		payment.SourceTransactionID = payments.Payments[0].SourceTransactionID
 		payment.CreatedAt = payments.Payments[0].CreatedAt
+
+	case "stripe":
+		resp, err := http.Get(ctx.Config.Connections.Stripe + "/" + ups.Payment.SourceID)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(body))
+
+		if resp.StatusCode != http.StatusOK {
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusBadRequest,
+				false,
+				"Unknown payment ID",
+				"PaymentResource POST"))
+			return
+		}
+
+		err = json.Unmarshal(body, &payments)
+		if err != nil {
+			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+				http.StatusInternalServerError,
+				true,
+				"Error decoding payment response",
+				"PaymentResource POST"))
+			return
+		}
+		fmt.Printf("Payment: %+v\n", payments.Payments[0])
+		payment.UserID = payments.Payments[0].UserID
+		payment.Amount = payments.Payments[0].Amount
+		payment.Currency = payments.Payments[0].Currency
+		payment.Code = payments.Payments[0].Code
+		payment.Description = payments.Payments[0].Description
+		payment.Source = payments.Payments[0].Source
+		payment.SourceID = payments.Payments[0].SourceID
+		payment.SourcePayerID = payments.Payments[0].SourcePayerID
+		payment.SourceTransactionID = payments.Payments[0].SourceTransactionID
+		payment.CreatedAt = payments.Payments[0].CreatedAt
+
 	default:
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusBadRequest,
