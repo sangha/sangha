@@ -1,6 +1,8 @@
 package transactions
 
 import (
+	"time"
+
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/muesli/smolder"
@@ -15,9 +17,14 @@ type TransactionResponse struct {
 }
 
 type transactionInfoResponse struct {
-	ID       int64   `json:"id"`
-	BudgetID int64   `json:"budget_id"`
-	Amount   float64 `json:"amount"`
+	ID            int64     `json:"id"`
+	BudgetID      int64     `json:"budget_id"`
+	Amount        int64     `json:"amount"`
+	CreatedAt     time.Time `json:"created_at"`
+	RemotePurpose string    `json:"remote_purpose"`
+	RemoteAccount string    `json:"remote_account"`
+	RemoteBankID  string    `json:"remote_bank_id"`
+	RemoteName    string    `json:"remote_name"`
 }
 
 // Init a new response
@@ -48,9 +55,14 @@ func (r *TransactionResponse) EmptyResponse() interface{} {
 
 func prepareTransactionResponse(context smolder.APIContext, transaction *db.Transaction) transactionInfoResponse {
 	resp := transactionInfoResponse{
-		ID:       transaction.ID,
-		BudgetID: transaction.BudgetID,
-		Amount:   transaction.Amount,
+		ID:            transaction.ID,
+		BudgetID:      transaction.BudgetID,
+		Amount:        transaction.Amount,
+		CreatedAt:     transaction.CreatedAt,
+		RemotePurpose: transaction.RemotePurpose,
+		RemoteAccount: transaction.RemoteAccount,
+		RemoteBankID:  transaction.RemoteBankID,
+		RemoteName:    transaction.RemoteName,
 	}
 
 	return resp

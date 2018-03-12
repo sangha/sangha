@@ -13,6 +13,7 @@ type TransactionResource struct {
 }
 
 var (
+	_ smolder.GetSupported  = &TransactionResource{}
 	_ smolder.PostSupported = &TransactionResource{}
 )
 
