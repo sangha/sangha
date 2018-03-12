@@ -12,10 +12,10 @@ import (
 // TransactionPostStruct holds all values of an incoming POST request
 type TransactionPostStruct struct {
 	Transaction struct {
-		Source          string  `json:"type"`
-		SourceID        string  `json:"source_id"`
-		Amount          float64 `json:"amount"`
-		TransactionCode string  `json:"transaction_code"`
+		Source          string `json:"type"`
+		SourceID        string `json:"source_id"`
+		Amount          int64  `json:"amount"`
+		TransactionCode string `json:"transaction_code"`
 	} `json:"transaction"`
 }
 

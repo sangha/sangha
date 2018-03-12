@@ -30,6 +30,7 @@ type projectInfoResponse struct {
 	Repository   string                `json:"repository"`
 	Logo         string                `json:"logo"`
 	RootBudget   string                `json:"budget_root"`
+	Balance      int64                 `json:"balance"`
 	Contributors []contributorResponse `json:"contributors,omitempty"`
 	Activated    bool                  `json:"activated"`
 }
@@ -77,6 +78,7 @@ func prepareProjectResponse(context smolder.APIContext, project *db.Project) pro
 
 	budget, _ := ctx.LoadRootBudgetForProject(project)
 	resp.RootBudget = budget.UUID
+	resp.Balance, _ = budget.Balance(ctx)
 
 	contributors, _ := project.Contributors(ctx)
 	for _, contributor := range contributors {
