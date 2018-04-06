@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"gitlab.techcultivation.org/sangha/mq"
 	"gitlab.techcultivation.org/sangha/sangha/config"
 	"gitlab.techcultivation.org/sangha/sangha/db"
 	"gitlab.techcultivation.org/sangha/sangha/logger"
@@ -42,6 +43,7 @@ func main() {
 	log.Infoln("Starting sangha JSON API")
 
 	db.SetupPostgres(config.Settings.Connections.PostgreSQL)
+	mq.SetupAMQP(config.Settings.Connections.AMQP)
 
 	if err := RootCmd.Execute(); err != nil {
 		os.Exit(-1)
