@@ -51,6 +51,7 @@
   },
 
   "Web": {
-    "BaseURL": "http://localhost:4200/"
+    "BaseURL": "http://localhost:4200/",
+    "ImageURL": "http://localhost:9992"
   }
 }

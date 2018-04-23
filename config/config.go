@@ -56,7 +56,8 @@ type Data struct {
 	EmailTemplates Templates
 
 	Web struct {
-		BaseURL string
+		BaseURL  string
+		ImageURL string
 	}
 }
 
