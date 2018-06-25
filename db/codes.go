@@ -45,6 +45,11 @@ func (context *APIContext) LoadCodeByID(id int64) (Code, error) {
 	return code, err
 }
 
+// LoadCodeByBudgetID loads a code by a single budgetID from the database
+func (context *APIContext) LoadCodeByBudgetUUID(budgetID string) (Code, error) {
+	return context.LoadCodeByBudgetsAndRatios([]string{budgetID}, []string{"100"}, "")
+}
+
 // LoadCodeByBudgetsAndRatios loads a code by budgetIDs and their ratios from the database
 func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSlice, userID string) (Code, error) {
 	code := Code{}
