@@ -81,7 +81,10 @@ func (context *APIContext) LoadCodeByBudgetsAndRatios(budgetIDs, ratios StringSl
 	}
 
 	// user may be empty
-	user, _ := context.GetUserByUUID(userID)
+	var user User
+	if userID != "" {
+		user, _ = context.GetUserByUUID(userID)
+	}
 
 	// sort budgets & ratios
 	sort.Sort(BudgetSorter(BudgetRatioPair{bids, ratios}))
