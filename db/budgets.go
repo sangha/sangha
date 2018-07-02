@@ -19,6 +19,15 @@ type Budget struct {
 	PrivateBalance bool
 }
 
+// LoadBudgetByID loads a budget by UUID from the database
+func (context *APIContext) LoadBudgetByID(id int64) (Budget, error) {
+	budget := Budget{}
+
+	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, description, private, private_balance FROM budgets WHERE id = $1", id).
+		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Description, &budget.Private, &budget.PrivateBalance)
+	return budget, err
+}
+
 // LoadBudgetByUUID loads a budget by UUID from the database
 func (context *APIContext) LoadBudgetByUUID(uuid string) (Budget, error) {
 	budget := Budget{}
