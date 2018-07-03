@@ -52,6 +52,29 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 	return budget, err
 }
 
+// LoadBudgets loads all budgets for a project
+func (context *APIContext) LoadBudgets(project *Project) ([]Budget, error) {
+	budgets := []Budget{}
+
+	rows, err := context.Query("SELECT id, uuid, project_id, user_id, parent, name, description, private, private_balance FROM budgets WHERE project_id = $1 AND parent = 0 ORDER BY id ASC", project.ID)
+	if err != nil {
+		return budgets, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		budget := Budget{}
+		err = rows.Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Description, &budget.Private, &budget.PrivateBalance)
+		if err != nil {
+			return budgets, err
+		}
+
+		budgets = append(budgets, budget)
+	}
+
+	return budgets, err
+}
+
 // GetBudgetByUUID returns a budget by UUID from the cache
 func (context *APIContext) GetBudgetByUUID(uuid string) (Budget, error) {
 	budget := Budget{}
