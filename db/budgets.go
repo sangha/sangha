@@ -121,8 +121,16 @@ func (budget *Budget) Update(context *APIContext) error {
 // Save a budget to the database
 func (budget *Budget) Save(context *APIContext) error {
 	budget.UUID, _ = UUID()
-	err := context.QueryRow("INSERT INTO budgets (uuid, project_id, user_id, parent, name, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
-		budget.UUID, budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Private, budget.PrivateBalance).Scan(&budget.ID)
+
+	err := context.QueryRow("INSERT INTO budgets (uuid, project_id, user_id, parent, name, description, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		budget.UUID, budget.ProjectID, budget.UserID, budget.ParentID, budget.Name, budget.Description, budget.Private, budget.PrivateBalance).Scan(&budget.ID)
+	budgetsCache.Delete(budget.UUID)
+	return err
+}
+
+// Delete a budget from the database
+func (budget *Budget) Delete(context *APIContext) error {
+	_, err := context.Exec("DELETE FROM budgets WHERE id = $1", budget.ID)
 	budgetsCache.Delete(budget.UUID)
 	return err
 }
