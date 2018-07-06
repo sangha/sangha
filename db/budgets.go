@@ -138,7 +138,7 @@ func (budget *Budget) Delete(context *APIContext) error {
 // Balance returns this budget's total balance
 func (budget *Budget) Balance(context *APIContext) (int64, error) {
 	var val int64
-	err := context.QueryRow("SELECT SUM(amount) FROM transactions WHERE budget_id = $1", budget.ID).
+	err := context.QueryRow("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE budget_id = $1", budget.ID).
 		Scan(&val)
 	return val, err
 }
