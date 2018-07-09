@@ -39,7 +39,15 @@ func SetupPostgres(pc config.PostgreSQLConnection) {
 // connection on further calls
 func GetDatabase() *sql.DB {
 	if pgDB == nil {
-		var err error
+		c := pgConfig
+		c.DbName = ""
+
+		db, err := sql.Open("postgres", c.Marshal())
+		if err != nil {
+			panic(err)
+		}
+		db.Query("CREATE DATABASE " + pgConfig.DbName)
+
 		pgDB, err = sql.Open("postgres", pgConfig.Marshal())
 		if err != nil {
 			panic(err)
