@@ -3,6 +3,7 @@ package db
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"net/url"
 	"path"
@@ -16,6 +17,10 @@ func (context *APIContext) LoadImage(id string) ([]byte, error) {
 
 // StoreImage writes an image to disk and returns the hashsum
 func (context *APIContext) StoreImage(logo []byte) (string, error) {
+	if len(logo) == 0 {
+		return "", errors.New("empty image data")
+	}
+
 	sha := sha1.New()
 	sha.Write([]byte(logo))
 	shasum := hex.EncodeToString(sha.Sum(nil))
