@@ -98,6 +98,7 @@ func InitDatabase() {
 			  created_at		timestamp		NOT NULL,
 			  private			bool			DEFAULT false,
 			  private_balance	bool			DEFAULT true,
+			  processing_cut	int				DEFAULT 10,
 			  activated   		bool			DEFAULT false,
 			  CONSTRAINT  		uk_projects_uuid 		UNIQUE (uuid),
 			  CONSTRAINT  		uk_projects_slug 		UNIQUE (slug),
