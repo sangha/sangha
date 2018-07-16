@@ -34,10 +34,10 @@ func (context *APIContext) StoreImage(logo []byte) (string, error) {
 
 // BuildImageURL returns the canonical URL for an image
 func (context *APIContext) BuildImageURL(id string, placeholder string) string {
-	u, _ := url.Parse(context.Config.Web.BaseURL)
+	u, _ := url.Parse(context.Config.Web.ImageURL)
 
 	if id == "" {
-		u.Path = path.Join(u.Path, "images", placeholder+".png")
+		u.Path = path.Join(u.Path, placeholder+".png")
 	} else {
 		u.Path = path.Join(u.Path, "images", id)
 	}
