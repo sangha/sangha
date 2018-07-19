@@ -3,7 +3,7 @@ package sessions
 import (
 	"net/http"
 
-	"gitlab.techcultivation.org/techcultivation/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
@@ -23,7 +23,7 @@ type SessionResponse struct {
 	smolder.Response
 
 	IDToken string `json:"id_token"`
-	UserID  int64  `json:"user_id"`
+	UserID  string `json:"user_id"`
 }
 
 // SessionPostStruct holds all values of an incoming POST request
@@ -83,20 +83,11 @@ func (r *SessionResource) PostParams() []*restful.Parameter {
 }
 
 // Post processes an incoming POST (create) request
-func (r *SessionResource) Post(context smolder.APIContext, request *restful.Request, response *restful.Response) {
+func (r *SessionResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
 	resp := SessionResponse{}
 	resp.Init(context)
 
-	sps := SessionPostStruct{}
-	err := request.ReadEntity(&sps)
-	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
-			"Can't parse POST data",
-			"SessionResource PUT"))
-		return
-	}
+	sps := data.(*SessionPostStruct)
 
 	user := db.User{}
 	if len(sps.Token) > 0 {
@@ -111,6 +102,7 @@ func (r *SessionResource) Post(context smolder.APIContext, request *restful.Requ
 			user.UpdatePassword(context.(*db.APIContext), sps.Password)
 		}
 	} else {
+		var err error
 		user, err = context.(*db.APIContext).GetUserByNameAndPassword(sps.Username, sps.Password)
 		if err != nil {
 			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
@@ -144,6 +136,20 @@ func (r *SessionResource) Post(context smolder.APIContext, request *restful.Requ
 	}
 
 	resp.IDToken = user.AuthToken[len(user.AuthToken)-1]
-	resp.UserID = user.ID
+	resp.UserID = user.UUID
 	response.WriteHeaderAndEntity(http.StatusOK, resp)
+}
+
+// Reads returns the model that will be read by POST, PUT & PATCH operations
+func (r *SessionResource) Reads() interface{} {
+	return &SessionPostStruct{}
+}
+
+// Returns returns the model that will be returned
+func (r *SessionResource) Returns() interface{} {
+	return SessionResponse{}
+}
+
+func (r *SessionResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
+	return nil
 }
