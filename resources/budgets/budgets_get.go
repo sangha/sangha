@@ -26,6 +26,7 @@ func (r *BudgetResource) GetDoc() string {
 func (r *BudgetResource) GetParams() []*restful.Parameter {
 	params := []*restful.Parameter{}
 	params = append(params, restful.QueryParameter("name", "name of a budget").DataType("string"))
+	params = append(params, restful.QueryParameter("project", "slug of a project").DataType("string"))
 
 	return params
 }
@@ -50,17 +51,31 @@ func (r *BudgetResource) GetByIDs(context smolder.APIContext, request *restful.R
 
 // Get sends out items matching the query parameters
 func (r *BudgetResource) Get(context smolder.APIContext, request *restful.Request, response *restful.Response, params map[string][]string) {
+	ctx := context.(*db.APIContext)
 	resp := BudgetResponse{}
 	resp.Init(context)
 
-	budgets, err := context.(*db.APIContext).LoadAllBudgets()
-	if err != nil {
-		r.NotFound(request, response)
-		return
-	}
+	if len(params["project"]) > 0 {
+		project, err := ctx.GetProjectByUUID(params["project"][0])
+		if err != nil {
+			r.NotFound(request, response)
+			return
+		}
 
-	for _, budget := range budgets {
-		resp.AddBudget(&budget)
+		budgets, _ := ctx.LoadBudgets(&project)
+		for _, budget := range budgets {
+			resp.AddBudget(&budget)
+		}
+	} else {
+		budgets, err := ctx.LoadAllBudgets()
+		if err != nil {
+			r.NotFound(request, response)
+			return
+		}
+
+		for _, budget := range budgets {
+			resp.AddBudget(&budget)
+		}
 	}
 
 	resp.Send(response)
