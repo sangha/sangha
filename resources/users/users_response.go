@@ -23,6 +23,7 @@ type userInfoResponse struct {
 	ZIP       string   `json:"zip"`
 	City      string   `json:"city"`
 	Country   string   `json:"country"`
+	Admin     bool     `json:"admin"`
 	Activated bool     `json:"activated"`
 }
 
@@ -62,6 +63,7 @@ func prepareUserResponse(context smolder.APIContext, user *db.User) userInfoResp
 		ZIP:       user.ZIP,
 		City:      user.City,
 		Country:   user.Country,
+		Admin:     user.ID == 1,
 		Activated: user.Activated,
 	}
 
