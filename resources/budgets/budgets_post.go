@@ -12,9 +12,10 @@ import (
 // BudgetPostStruct holds all values of an incoming POST request
 type BudgetPostStruct struct {
 	Budget struct {
-		ProjectID      int64  `json:"project_id"`
+		Project        string `json:"project"`
 		ParentID       int64  `json:"parent_id"`
 		Name           string `json:"name"`
+		Description    string `json:"description"`
 		Private        bool   `json:"private"`
 		PrivateBalance bool   `json:"private_balance"`
 	} `json:"budget"`
@@ -49,15 +50,28 @@ func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, requ
 
 	ups := data.(*BudgetPostStruct)
 
+	project, err := context.(*db.APIContext).LoadProjectByUUID(ups.Budget.Project)
+	if err != nil {
+		panic(err)
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusInternalServerError,
+			true,
+			"No such project",
+			"BudgetResource POST"))
+		return
+	}
+
 	budget := db.Budget{
-		ProjectID:      &ups.Budget.ProjectID,
+		ProjectID:      &project.ID,
 		ParentID:       ups.Budget.ParentID,
 		Name:           ups.Budget.Name,
+		Description:    ups.Budget.Description,
 		Private:        ups.Budget.Private,
 		PrivateBalance: ups.Budget.PrivateBalance,
 	}
-	err := budget.Save(context.(*db.APIContext))
+	err = budget.Save(context.(*db.APIContext))
 	if err != nil {
+		panic(err)
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
 			true,
