@@ -51,7 +51,18 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 		} */
 
 	pps := data.(*BudgetPutStruct)
-	budget.ProjectID = &pps.Budget.ProjectID
+	project, err := context.(*db.APIContext).LoadProjectByUUID(pps.Budget.Project)
+	if err != nil {
+		panic(err)
+		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			http.StatusInternalServerError,
+			true,
+			"No such project",
+			"BudgetResource POST"))
+		return
+	}
+
+	budget.ProjectID = &project.ID
 	budget.Name = pps.Budget.Name
 	budget.Private = pps.Budget.Private
 	budget.PrivateBalance = pps.Budget.PrivateBalance
