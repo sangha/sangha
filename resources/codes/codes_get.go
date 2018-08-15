@@ -1,9 +1,6 @@
 package codes
 
 import (
-	"fmt"
-	"strconv"
-
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
@@ -42,12 +39,7 @@ func (r *CodeResource) GetByIDs(context smolder.APIContext, request *restful.Req
 	resp.Init(context)
 
 	for _, id := range ids {
-		iid, err := strconv.Atoi(id)
-		if err != nil {
-			r.NotFound(request, response)
-			return
-		}
-		code, err := context.(*db.APIContext).GetCodeByID(int64(iid))
+		code, err := context.(*db.APIContext).LoadCodeByCode(id)
 		if err != nil {
 			r.NotFound(request, response)
 			return
