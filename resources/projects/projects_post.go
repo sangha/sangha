@@ -54,8 +54,9 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		return
 	}*/
 
+	ctx := context.(*db.APIContext)
 	ups := data.(*ProjectPostStruct)
-	_, err := context.(*db.APIContext).LoadProjectBySlug(ups.Project.Slug)
+	_, err := ctx.LoadProjectBySlug(ups.Project.Slug)
 	if err == nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusBadRequest,
@@ -77,18 +78,21 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		PrivateBalance: true,
 	}
 
-	logo, err := base64.StdEncoding.DecodeString(ups.Project.Logo)
-	if err == nil {
-		project.Logo, err = context.(*db.APIContext).StoreImage(logo)
-		if err != nil {
-			log.Println("WARNING: could not store image:", err)
+	if len(ups.Project.Logo) > 0 {
+		logo, err := base64.StdEncoding.DecodeString(ups.Project.Logo)
+		if err == nil {
+			project.Logo, err = ctx.StoreImage(logo)
+			if err != nil {
+				log.Println("WARNING: could not store image:", err)
+			}
+		} else {
+			log.Println("WARNING: could not decode logo:", err)
 		}
-	} else {
-		log.Println("WARNING: could not decode logo:", err)
 	}
 
-	err = project.Save(context.(*db.APIContext))
+	err = project.Save(ctx)
 	if err != nil {
+		panic(err)
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
 			true,
@@ -104,7 +108,7 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 		Private:        false,
 		PrivateBalance: true,
 	}
-	err = budget.Save(context.(*db.APIContext))
+	err = budget.Save(ctx)
 	if err != nil {
 		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
