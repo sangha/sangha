@@ -77,9 +77,8 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 		fmt.Println(string(body))
 
 		if resp.StatusCode != http.StatusOK {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
 				http.StatusBadRequest,
-				false,
 				"Unknown payment ID",
 				"PaymentResource POST"))
 			return
@@ -87,9 +86,8 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 
 		err = json.Unmarshal(body, &payments)
 		if err != nil {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 				http.StatusInternalServerError,
-				true,
 				"Error decoding payment response",
 				"PaymentResource POST"))
 			return
@@ -116,9 +114,8 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 		fmt.Println(string(body))
 
 		if resp.StatusCode != http.StatusOK {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
 				http.StatusBadRequest,
-				false,
 				"Unknown payment ID",
 				"PaymentResource POST"))
 			return
@@ -126,9 +123,8 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 
 		err = json.Unmarshal(body, &payments)
 		if err != nil {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 				http.StatusInternalServerError,
-				true,
 				"Error decoding payment response",
 				"PaymentResource POST"))
 			return
@@ -146,9 +142,8 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 		payment.CreatedAt = payments.Payments[0].CreatedAt
 
 	default:
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
 			http.StatusBadRequest,
-			false,
 			"Unknown payment source",
 			"PaymentResource POST"))
 		return

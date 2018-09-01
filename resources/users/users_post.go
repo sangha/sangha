@@ -87,9 +87,8 @@ func (r *UserResource) Post(context smolder.APIContext, data interface{}, reques
 	}
 
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't create user",
 			"UserResource POST"))
 		return

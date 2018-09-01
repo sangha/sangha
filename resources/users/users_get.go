@@ -68,9 +68,8 @@ func (r *UserResource) Get(context smolder.APIContext, request *restful.Request,
 	} else {
 		auth, err := context.Authentication(request)
 		if err != nil || auth == nil || auth.(db.User).ID != 1 {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 				http.StatusUnauthorized,
-				false,
 				"Admin permission required for this operation",
 				"UserResource GET"))
 			return

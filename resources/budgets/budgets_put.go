@@ -53,10 +53,8 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 	pps := data.(*BudgetPutStruct)
 	project, err := context.(*db.APIContext).LoadProjectByUUID(pps.Budget.Project)
 	if err != nil {
-		panic(err)
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusInternalServerError,
-			true,
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusBadRequest,
 			"No such project",
 			"BudgetResource POST"))
 		return
@@ -69,9 +67,8 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 
 	err = budget.Update(context.(*db.APIContext))
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't update budget",
 			"BudgetResource PUT"))
 		return

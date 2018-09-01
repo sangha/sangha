@@ -52,10 +52,8 @@ func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, requ
 
 	project, err := context.(*db.APIContext).LoadProjectByUUID(ups.Budget.Project)
 	if err != nil {
-		panic(err)
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusInternalServerError,
-			true,
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusBadRequest,
 			"No such project",
 			"BudgetResource POST"))
 		return
@@ -71,10 +69,8 @@ func (r *BudgetResource) Post(context smolder.APIContext, data interface{}, requ
 	}
 	err = budget.Save(context.(*db.APIContext))
 	if err != nil {
-		panic(err)
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't create budget",
 			"BudgetResource POST"))
 		return

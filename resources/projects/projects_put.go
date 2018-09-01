@@ -60,9 +60,8 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 
 	err = project.Update(context.(*db.APIContext))
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't update project",
 			"ProjectResource PUT"))
 		return

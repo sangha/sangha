@@ -58,9 +58,8 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	ups := data.(*ProjectPostStruct)
 	_, err := ctx.LoadProjectBySlug(ups.Project.Slug)
 	if err == nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
 			http.StatusBadRequest,
-			false,
 			"A project with this slug address already exists",
 			"ProjectResource POST"))
 		return
@@ -92,10 +91,8 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 
 	err = project.Save(ctx)
 	if err != nil {
-		panic(err)
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't create project",
 			"ProjectResource POST"))
 		return
@@ -110,9 +107,8 @@ func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, req
 	}
 	err = budget.Save(ctx)
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't create budget for new project",
 			"ProjectResource POST"))
 		return

@@ -28,9 +28,8 @@ func (r *BudgetResource) DeleteParams() []*restful.Parameter {
 func (r *BudgetResource) Delete(context smolder.APIContext, request *restful.Request, response *restful.Response) {
 	auth, err := context.Authentication(request)
 	if err != nil || auth.(db.Budget).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusUnauthorized,
-			false,
 			"Admin permission required for this operation",
 			"BudgetResource DELETE"))
 		return
@@ -45,9 +44,8 @@ func (r *BudgetResource) Delete(context smolder.APIContext, request *restful.Req
 
 	err = budget.Delete(ctx)
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't delete budget",
 			"BudgetResource DELETE"))
 		return

@@ -105,9 +105,8 @@ func (r *SessionResource) Post(context smolder.APIContext, data interface{}, req
 		var err error
 		user, err = context.(*db.APIContext).GetUserByNameAndPassword(sps.Username, sps.Password)
 		if err != nil {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+			smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 				http.StatusUnauthorized,
-				false,
 				err,
 				"SessionResource PUT"))
 			return
@@ -116,9 +115,8 @@ func (r *SessionResource) Post(context smolder.APIContext, data interface{}, req
 
 	uuid, err := db.UUID()
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-			http.StatusBadRequest,
-			false,
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusInternalServerError,
 			"Can't create authtoken",
 			"SessionResource PUT"))
 		return
@@ -127,9 +125,8 @@ func (r *SessionResource) Post(context smolder.APIContext, data interface{}, req
 	user.AuthToken = append(user.AuthToken, uuid)
 	err = user.Update(context.(*db.APIContext))
 	if err != nil {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusInternalServerError,
-			true,
 			"Can't update user session",
 			"SessionResource POST"))
 		return
