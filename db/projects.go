@@ -140,3 +140,23 @@ func (project *Project) Contributors(context *APIContext) ([]User, error) {
 
 	return users, err
 }
+
+// Balance returns this project's total balance
+func (project *Project) Balance(context *APIContext) (int64, error) {
+	var b int64
+
+	budgets, err := context.LoadBudgets(project)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, budget := range budgets {
+		bal, err := budget.Balance(context)
+		if err != nil {
+			return 0, err
+		}
+		b += bal
+	}
+
+	return b, nil
+}
