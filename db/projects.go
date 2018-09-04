@@ -160,3 +160,33 @@ func (project *Project) Balance(context *APIContext) (int64, error) {
 
 	return b, nil
 }
+
+// SearchProjects searches database for projects
+func (context *APIContext) SearchProjects(term string) ([]Project, error) {
+	projects := []Project{}
+
+	rows, err := context.Query("SELECT DISTINCT id FROM projects "+
+		"WHERE (LOWER(name) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(summary) LIKE LOWER('%' || $1 || '%'))", term)
+	if err != nil {
+		return projects, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		err = rows.Scan(&id)
+		if err != nil {
+			return projects, err
+		}
+
+		p, err := context.GetProjectByID(id)
+		if err != nil {
+			return projects, err
+		}
+
+		projects = append(projects, p)
+	}
+
+	return projects, nil
+}

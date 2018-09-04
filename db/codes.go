@@ -177,3 +177,31 @@ func (code *Code) Save(context *APIContext) error {
 	return err
 }
 */
+
+// SearchCodes searches database for codes
+func (context *APIContext) SearchCodes(term string) ([]Code, error) {
+	codes := []Code{}
+
+	rows, err := context.Query("SELECT DISTINCT codes.id, codes.code, codes.budget_ids, codes.ratios, codes.user_id FROM codes, projects, "+
+		"UNNEST(codes.budget_ids) bid LEFT JOIN budgets ON budgets.id=bid "+
+		"WHERE projects.id = budgets.project_id AND "+
+		"(LOWER(codes.code) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(budgets.name) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(projects.name) LIKE LOWER('%' || $1 || '%'))", term)
+	if err != nil {
+		return codes, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		code := Code{}
+		err = rows.Scan(&code.ID, &code.Code, &code.BudgetIDs, &code.Ratios, &code.UserID)
+		if err != nil {
+			return codes, err
+		}
+
+		codes = append(codes, code)
+	}
+
+	return codes, err
+}

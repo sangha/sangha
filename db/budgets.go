@@ -143,6 +143,38 @@ func (budget *Budget) Balance(context *APIContext) (int64, error) {
 	return val, err
 }
 
+// SearchBudgets searches database for budgets
+func (context *APIContext) SearchBudgets(term string) ([]Budget, error) {
+	budgets := []Budget{}
+
+	rows, err := context.Query("SELECT DISTINCT budgets.id FROM budgets, projects "+
+		"WHERE projects.id = budgets.project_id AND "+
+		"(LOWER(budgets.name) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(projects.name) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(budgets.description) LIKE LOWER('%' || $1 || '%'))", term)
+	if err != nil {
+		return budgets, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		err = rows.Scan(&id)
+		if err != nil {
+			return budgets, err
+		}
+
+		p, err := context.LoadBudgetByID(id)
+		if err != nil {
+			return budgets, err
+		}
+
+		budgets = append(budgets, p)
+	}
+
+	return budgets, nil
+}
+
 // BudgetRatioPair represents a pair of budgets and ratios
 type BudgetRatioPair struct {
 	budgetIDs []string
