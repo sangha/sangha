@@ -143,6 +143,28 @@ func (budget *Budget) Balance(context *APIContext) (int64, error) {
 	return val, err
 }
 
+// BalanceStats returns this budget's total balance for the past months
+func (budget *Budget) BalanceStats(context *APIContext) ([]int64, error) {
+	var val []int64
+
+	lom := time.Now().UTC()
+
+	b := int64(-1)
+	for b != 0 {
+		err := context.QueryRow("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE budget_id = $1 AND created_at <= $2", budget.ID, lom).
+			Scan(&b)
+		if err != nil {
+			return val, err
+		}
+
+		val = append(val, b)
+		fom := time.Date(lom.Year(), lom.Month(), 1, 0, 0, 0, 0, time.UTC)
+		lom = fom.AddDate(0, 0, 0).Add(time.Nanosecond * -1)
+	}
+
+	return val, nil
+}
+
 // SearchBudgets searches database for budgets
 func (context *APIContext) SearchBudgets(term string) ([]Budget, error) {
 	budgets := []Budget{}

@@ -161,6 +161,32 @@ func (project *Project) Balance(context *APIContext) (int64, error) {
 	return b, nil
 }
 
+// BalanceStats returns this project's total balances for the past months
+func (project *Project) BalanceStats(context *APIContext) ([]int64, error) {
+	var b []int64
+
+	budgets, err := context.LoadBudgets(project)
+	if err != nil {
+		return b, err
+	}
+
+	for _, budget := range budgets {
+		bal, err := budget.BalanceStats(context)
+		if err != nil {
+			return b, err
+		}
+
+		for idx, v := range bal {
+			if idx >= len(b) {
+				b = append(b, 0)
+			}
+			b[idx] += v
+		}
+	}
+
+	return b, nil
+}
+
 // SearchProjects searches database for projects
 func (context *APIContext) SearchProjects(term string) ([]Project, error) {
 	projects := []Project{}
