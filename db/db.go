@@ -11,7 +11,7 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/muesli/cache2go"
-	uuid "github.com/nu7hatch/gouuid"
+	"github.com/satori/go.uuid"
 )
 
 var (
