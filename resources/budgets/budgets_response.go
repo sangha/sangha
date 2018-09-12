@@ -2,6 +2,7 @@ package budgets
 
 import (
 	"gitlab.techcultivation.org/sangha/sangha/db"
+	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
 
 	"github.com/muesli/smolder"
 )
@@ -10,14 +11,20 @@ import (
 type BudgetResponse struct {
 	smolder.Response
 
-	Budgets []budgetInfoResponse `json:"budgets,omitempty"`
+	Budgets []BudgetInfoResponse `json:"budgets,omitempty"`
 	budgets []db.Budget
+
+	Projects []projects.ProjectInfoResponse `json:"projects,omitempty"`
+	projects []db.Project
 }
 
-type budgetInfoResponse struct {
-	ID        string `json:"id"`
-	ProjectID string `json:"project_id"`
-	Name      string `json:"name"`
+type BudgetInfoResponse struct {
+	ID          string `json:"id"`
+	Project     string `json:"project"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Balance     int64  `json:"balance"`
+	Code        string `json:"code"`
 }
 
 // Init a new response
@@ -25,13 +32,22 @@ func (r *BudgetResponse) Init(context smolder.APIContext) {
 	r.Parent = r
 	r.Context = context
 
-	r.Budgets = []budgetInfoResponse{}
+	r.Budgets = []BudgetInfoResponse{}
+	r.Projects = []projects.ProjectInfoResponse{}
 }
 
 // AddBudget adds a budget to the response
 func (r *BudgetResponse) AddBudget(budget *db.Budget) {
 	r.budgets = append(r.budgets, *budget)
-	r.Budgets = append(r.Budgets, prepareBudgetResponse(r.Context, budget))
+	r.Budgets = append(r.Budgets, PrepareBudgetResponse(r.Context, budget))
+
+	project, err := r.Context.(*db.APIContext).GetProjectByID(*budget.ProjectID)
+	if err != nil {
+		panic(err)
+	}
+
+	r.projects = append(r.projects, project)
+	r.Projects = append(r.Projects, projects.PrepareProjectResponse(r.Context, &project))
 }
 
 // EmptyResponse returns an empty API response for this endpoint if there's no data to respond with
@@ -40,22 +56,30 @@ func (r *BudgetResponse) EmptyResponse() interface{} {
 		var out struct {
 			Budgets interface{} `json:"budgets"`
 		}
-		out.Budgets = []budgetInfoResponse{}
+		out.Budgets = []BudgetInfoResponse{}
 		return out
 	}
 	return nil
 }
 
-func prepareBudgetResponse(context smolder.APIContext, budget *db.Budget) budgetInfoResponse {
-	project, err := context.(*db.APIContext).GetProjectByID(*budget.ProjectID)
+func PrepareBudgetResponse(context smolder.APIContext, budget *db.Budget) BudgetInfoResponse {
+	ctx := context.(*db.APIContext)
+	project, err := ctx.GetProjectByID(*budget.ProjectID)
 	if err != nil {
 		panic(err)
 	}
 
-	resp := budgetInfoResponse{
-		ID:        budget.UUID,
-		ProjectID: project.UUID,
-		Name:      budget.Name,
+	resp := BudgetInfoResponse{
+		ID:          budget.UUID,
+		Project:     project.UUID,
+		Name:        budget.Name,
+		Description: budget.Description,
+	}
+
+	resp.Balance, _ = budget.Balance(ctx)
+	code, err := ctx.LoadCodeByBudgetUUID(budget.UUID)
+	if err == nil {
+		resp.Code = code.Code
 	}
 
 	return resp
