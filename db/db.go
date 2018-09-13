@@ -118,20 +118,23 @@ func InitDatabase() {
 			  CONSTRAINT    	fk_budgets_project_id	FOREIGN KEY (project_id) REFERENCES projects (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE,
 			  CONSTRAINT    	fk_budgets_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS payments
 			(
 			  id          			bigserial 		PRIMARY KEY,
-			  user_id				bigserial	   	NOT NULL,
+			  budget_id				bigserial   	NOT NULL,
+			  created_at			timestamp		NOT NULL,
 			  amount				int				NOT NULL,
 			  currency				text			NOT NULL,
-			  code					text,
-			  description			text,
+			  code					text			DEFAULT '',
+			  purpose				text			DEFAULT '',
+			  remote_account		text			NOT NULL,
+			  remote_name			text			NOT NULL,
+			  remote_transaction_id	text			DEFAULT '',
+			  remote_bank_id		text			DEFAULT '',
 			  source				text			NOT NULL,
-			  source_id				text			NOT NULL,
-			  source_payer_id		text,
-			  source_transaction_id	text			NOT NULL,
-			  created_at			timestamp		NOT NULL,
-			  CONSTRAINT    		fk_payments_user_id	FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
+			  pending				bool			DEFAULT true,
+			  CONSTRAINT    		fk_payments_budget_id	FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
 			)`,
 		`CREATE TABLE IF NOT EXISTS transactions
 			(
@@ -185,6 +188,8 @@ func InitDatabase() {
 		`CREATE INDEX idx_budgets_name ON budgets(name)`,
 		`CREATE INDEX idx_budgets_project_id ON budgets(project_id)`,
 		`CREATE INDEX idx_codes_code ON codes(code)`,
+		`CREATE INDEX idx_payments_budget_id ON payments(budget_id)`,
+		`CREATE INDEX idx_payments_created_at ON payments(created_at)`,
 		`CREATE INDEX idx_transactions_budget_id ON transactions(budget_id)`,
 		`CREATE INDEX idx_transactions_from_budget_id ON transactions(from_budget_id)`,
 		`CREATE INDEX idx_transactions_created_at ON transactions(created_at)`,

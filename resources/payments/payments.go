@@ -13,7 +13,9 @@ type PaymentResource struct {
 }
 
 var (
+	_ smolder.GetSupported  = &PaymentResource{}
 	_ smolder.PostSupported = &PaymentResource{}
+	_ smolder.PutSupported  = &PaymentResource{}
 )
 
 // Register this resource with the container to setup all the routes
@@ -43,7 +45,7 @@ func (r *PaymentResource) Returns() interface{} {
 func (r *PaymentResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
 	ups := data.(*PaymentPostStruct)
 
-	if ups.Payment.Amount <= 0 {
+	if ups.Payment.Amount == 0 {
 		return errors.New("Invalid payment amount")
 	}
 

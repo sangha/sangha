@@ -1,6 +1,7 @@
 package payments
 
 import (
+	"strconv"
 	"time"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
@@ -18,16 +19,18 @@ type PaymentResponse struct {
 
 type paymentInfoResponse struct {
 	ID                  int64     `json:"id"`
-	UserID              int64     `json:"user_id"`
+	BudgetID            string    `json:"budget_id"`
+	CreatedAt           time.Time `json:"created_at"`
 	Amount              int64     `json:"amount"`
 	Currency            string    `json:"currency"`
-	Code                string    `json:"code"`
-	Description         string    `json:"description"`
+	Code                *string   `json:"code"`
+	Purpose             string    `json:"purpose"`
+	RemoteAccount       string    `json:"remote_account"`
+	RemoteBankID        string    `json:"remote_bank_id"`
+	RemoteTransactionID string    `json:"remote_transaction_id"`
+	RemoteName          string    `json:"remote_name"`
 	Source              string    `json:"source"`
-	SourceID            string    `json:"source_id"`
-	SourcePayerID       string    `json:"source_payer_id"`
-	SourceTransactionID string    `json:"source_transaction_id"`
-	CreatedAt           time.Time `json:"created_at"`
+	Pending             bool      `json:"pending"`
 }
 
 // Init a new response
@@ -39,8 +42,8 @@ func (r *PaymentResponse) Init(context smolder.APIContext) {
 }
 
 // AddPayment adds a payment to the response
-func (r *PaymentResponse) AddPayment(payment *db.Payment) {
-	r.payments = append(r.payments, *payment)
+func (r *PaymentResponse) AddPayment(payment db.Payment) {
+	r.payments = append(r.payments, payment)
 	r.Payments = append(r.Payments, preparePaymentResponse(r.Context, payment))
 }
 
@@ -56,18 +59,37 @@ func (r *PaymentResponse) EmptyResponse() interface{} {
 	return nil
 }
 
-func preparePaymentResponse(context smolder.APIContext, payment *db.Payment) paymentInfoResponse {
+func preparePaymentResponse(context smolder.APIContext, payment db.Payment) paymentInfoResponse {
 	resp := paymentInfoResponse{
 		ID:                  payment.ID,
-		UserID:              payment.UserID,
+		CreatedAt:           payment.CreatedAt,
 		Amount:              payment.Amount,
 		Currency:            payment.Currency,
-		Description:         payment.Description,
+		Purpose:             payment.Purpose,
+		RemoteAccount:       payment.RemoteAccount,
+		RemoteBankID:        payment.RemoteBankID,
+		RemoteTransactionID: payment.RemoteTransactionID,
+		RemoteName:          payment.RemoteName,
 		Source:              payment.Source,
-		SourceID:            payment.SourceID,
-		SourcePayerID:       payment.SourcePayerID,
-		SourceTransactionID: payment.SourceTransactionID,
-		CreatedAt:           payment.CreatedAt,
+		Pending:             payment.Pending,
+	}
+
+	if payment.Code != "" {
+		resp.Code = &payment.Code
+	}
+
+	c, err := context.(*db.APIContext).LoadCodeByCode(payment.Code)
+	if err == nil {
+		bid, err := strconv.ParseInt(c.BudgetIDs[0], 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		b, err := context.(*db.APIContext).LoadBudgetByID(bid)
+		if err != nil {
+			panic(err)
+		}
+
+		resp.BudgetID = b.UUID
 	}
 
 	return resp

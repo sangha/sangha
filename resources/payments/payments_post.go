@@ -17,10 +17,11 @@ import (
 // PaymentPostStruct holds all values of an incoming POST request
 type PaymentPostStruct struct {
 	Payment struct {
-		Source          string `json:"source"`
-		SourceID        string `json:"source_id"`
-		Amount          int64  `json:"amount"`
-		TransactionCode string `json:"transaction_code"`
+		Source   string `json:"source"`
+		SourceID string `json:"source_id"`
+		Amount   int64  `json:"amount"`
+		Code     string `json:"code"`
+		Pending  bool   `json:"pending"`
 	} `json:"payment"`
 }
 
@@ -64,7 +65,7 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 	switch ups.Payment.Source {
 	case "bank_transfer":
 		payment.Amount = ups.Payment.Amount
-		payment.Code = ups.Payment.TransactionCode
+		payment.Code = ups.Payment.Code
 		payment.Source = ups.Payment.Source
 
 	case "paypal":
@@ -93,15 +94,15 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 			return
 		}
 		fmt.Printf("Payment: %+v\n", payments.Payments[0])
-		payment.UserID = payments.Payments[0].UserID
+		// payment.RemoteAccount = payments.Payments[0].UserID
 		payment.Amount = payments.Payments[0].Amount
 		payment.Currency = payments.Payments[0].Currency
 		payment.Code = payments.Payments[0].Code
-		payment.Description = payments.Payments[0].Description
+		payment.Purpose = payments.Payments[0].Description
 		payment.Source = payments.Payments[0].Source
-		payment.SourceID = payments.Payments[0].SourceID
-		payment.SourcePayerID = payments.Payments[0].SourcePayerID
-		payment.SourceTransactionID = payments.Payments[0].SourceTransactionID
+		payment.RemoteBankID = payments.Payments[0].SourceID
+		payment.RemoteAccount = payments.Payments[0].SourcePayerID
+		payment.RemoteTransactionID = payments.Payments[0].SourceTransactionID
 		payment.CreatedAt = payments.Payments[0].CreatedAt
 
 	case "stripe":
@@ -130,15 +131,15 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 			return
 		}
 		fmt.Printf("Payment: %+v\n", payments.Payments[0])
-		payment.UserID = payments.Payments[0].UserID
+		// payment.RemoteAccount = payments.Payments[0].UserID
 		payment.Amount = payments.Payments[0].Amount
 		payment.Currency = payments.Payments[0].Currency
 		payment.Code = payments.Payments[0].Code
-		payment.Description = payments.Payments[0].Description
+		payment.Purpose = payments.Payments[0].Description
 		payment.Source = payments.Payments[0].Source
-		payment.SourceID = payments.Payments[0].SourceID
-		payment.SourcePayerID = payments.Payments[0].SourcePayerID
-		payment.SourceTransactionID = payments.Payments[0].SourceTransactionID
+		payment.RemoteBankID = payments.Payments[0].SourceID
+		payment.RemoteAccount = payments.Payments[0].SourcePayerID
+		payment.RemoteTransactionID = payments.Payments[0].SourceTransactionID
 		payment.CreatedAt = payments.Payments[0].CreatedAt
 
 	default:
@@ -151,6 +152,6 @@ func (r *PaymentResource) Post(context smolder.APIContext, data interface{}, req
 
 	resp := PaymentResponse{}
 	resp.Init(context)
-	resp.AddPayment(&payment)
+	resp.AddPayment(payment)
 	resp.Send(response)
 }
