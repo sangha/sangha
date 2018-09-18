@@ -144,15 +144,13 @@ func InitDatabase() {
 			  to_budget_id		int,
 			  amount			int				NOT NULL,
 			  created_at		timestamp		NOT NULL,
-			  pending			bool			DEFAULT true,
-			  remote_purpose	text,
-			  remote_account	text			NOT NULL,
-			  remote_bank_id	text,
-			  remote_name		text			NOT NULL,
+			  purpose			text,
+			  payment_id		int,
 			  CONSTRAINT    	fk_transactions_budget_id		FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
 			  CONSTRAINT    	fk_transactions_from_budget_id	FOREIGN KEY (from_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
-			  CONSTRAINT    	fk_transactions_to_budget_id	FOREIGN KEY (to_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
-			  )`,
+			  CONSTRAINT    	fk_transactions_to_budget_id	FOREIGN KEY (to_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
+			  CONSTRAINT    	fk_transactions_payment_id		FOREIGN KEY (payment_id) REFERENCES payments (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
+			)`,
 		`CREATE TABLE IF NOT EXISTS codes
 			(
 			  id			bigserial 		PRIMARY KEY,

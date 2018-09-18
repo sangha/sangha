@@ -17,14 +17,14 @@ type TransactionResponse struct {
 }
 
 type transactionInfoResponse struct {
-	ID            int64     `json:"id"`
-	BudgetID      int64     `json:"budget_id"`
-	Amount        int64     `json:"amount"`
-	CreatedAt     time.Time `json:"created_at"`
-	RemotePurpose string    `json:"remote_purpose"`
-	RemoteAccount string    `json:"remote_account"`
-	RemoteBankID  string    `json:"remote_bank_id"`
-	RemoteName    string    `json:"remote_name"`
+	ID           int64     `json:"id"`
+	BudgetID     string    `json:"budget_id"`
+	FromBudgetID *string   `json:"from_budget_id"`
+	ToBudgetID   *string   `json:"to_budget_id"`
+	Amount       int64     `json:"amount"`
+	CreatedAt    time.Time `json:"created_at"`
+	Purpose      string    `json:"purpose"`
+	PaymentID    *int64    `json:"payment_id"`
 }
 
 // Init a new response
@@ -36,8 +36,8 @@ func (r *TransactionResponse) Init(context smolder.APIContext) {
 }
 
 // AddTransaction adds a transaction to the response
-func (r *TransactionResponse) AddTransaction(transaction *db.Transaction) {
-	r.transactions = append(r.transactions, *transaction)
+func (r *TransactionResponse) AddTransaction(transaction db.Transaction) {
+	r.transactions = append(r.transactions, transaction)
 	r.Transactions = append(r.Transactions, prepareTransactionResponse(r.Context, transaction))
 }
 
@@ -53,16 +53,25 @@ func (r *TransactionResponse) EmptyResponse() interface{} {
 	return nil
 }
 
-func prepareTransactionResponse(context smolder.APIContext, transaction *db.Transaction) transactionInfoResponse {
+func prepareTransactionResponse(context smolder.APIContext, transaction db.Transaction) transactionInfoResponse {
+	ctx := context.(*db.APIContext)
 	resp := transactionInfoResponse{
-		ID:            transaction.ID,
-		BudgetID:      transaction.BudgetID,
-		Amount:        transaction.Amount,
-		CreatedAt:     transaction.CreatedAt,
-		RemotePurpose: transaction.RemotePurpose,
-		RemoteAccount: transaction.RemoteAccount,
-		RemoteBankID:  transaction.RemoteBankID,
-		RemoteName:    transaction.RemoteName,
+		ID:        transaction.ID,
+		Amount:    transaction.Amount,
+		CreatedAt: transaction.CreatedAt,
+		Purpose:   transaction.Purpose,
+		PaymentID: transaction.PaymentID,
+	}
+
+	budget, _ := ctx.LoadBudgetByID(transaction.BudgetID)
+	resp.BudgetID = budget.UUID
+	if transaction.FromBudgetID != nil {
+		fromBudget, _ := ctx.LoadBudgetByID(*transaction.FromBudgetID)
+		resp.FromBudgetID = &fromBudget.UUID
+	}
+	if transaction.ToBudgetID != nil {
+		toBudget, _ := ctx.LoadBudgetByID(*transaction.ToBudgetID)
+		resp.ToBudgetID = &toBudget.UUID
 	}
 
 	return resp

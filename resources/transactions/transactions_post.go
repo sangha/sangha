@@ -2,6 +2,8 @@ package transactions
 
 import (
 	"log"
+	"net/http"
+	"time"
 
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
@@ -12,10 +14,10 @@ import (
 // TransactionPostStruct holds all values of an incoming POST request
 type TransactionPostStruct struct {
 	Transaction struct {
-		Source          string `json:"type"`
-		SourceID        string `json:"source_id"`
-		Amount          int64  `json:"amount"`
-		TransactionCode string `json:"transaction_code"`
+		BudgetID   string `json:"budget_id"`
+		ToBudgetID string `json:"to_budget_id"`
+		Amount     int64  `json:"amount"`
+		Purpose    string `json:"purpose"`
 	} `json:"transaction"`
 }
 
@@ -36,15 +38,50 @@ func (r *TransactionResource) PostParams() []*restful.Parameter {
 
 // Post processes an incoming POST (create) request
 func (r *TransactionResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
+	ctx := context.(*db.APIContext)
 	ups := data.(*TransactionPostStruct)
 	log.Printf("Got transaction request: %+v\n", ups)
 
-	transaction := db.Transaction{
-		Amount: ups.Transaction.Amount,
+	from, err := ctx.LoadBudgetByUUID(ups.Transaction.BudgetID)
+	if err != nil {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			"A budget with this ID does not exist",
+			"TransactionResource POST"))
+		return
+	}
+	to, err := ctx.LoadBudgetByUUID(ups.Transaction.ToBudgetID)
+	if err != nil {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			"A budget with this ID does not exist",
+			"TransactionResource POST"))
+		return
+	}
+
+	bal, err := from.Balance(ctx)
+	if err != nil {
+		panic(err)
+	}
+	if bal < ups.Transaction.Amount {
+		smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
+			http.StatusBadRequest,
+			"This budget does not have the necessary funds",
+			"TransactionResource POST"))
+		return
+	}
+
+	t, err := ctx.Transfer(from.ID, to.ID, ups.Transaction.Amount, ups.Transaction.Purpose, 0, time.Now().UTC())
+	if err != nil {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusInternalServerError,
+			"Could not process transaction",
+			"TransactionResource POST"))
+		return
 	}
 
 	resp := TransactionResponse{}
 	resp.Init(context)
-	resp.AddTransaction(&transaction)
+	resp.AddTransaction(t)
 	resp.Send(response)
 }

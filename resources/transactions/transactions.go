@@ -1,8 +1,6 @@
 package transactions
 
 import (
-	"errors"
-
 	"github.com/emicklei/go-restful"
 	"github.com/muesli/smolder"
 )
@@ -15,6 +13,7 @@ type TransactionResource struct {
 var (
 	_ smolder.GetSupported  = &TransactionResource{}
 	_ smolder.PostSupported = &TransactionResource{}
+	_ smolder.PutSupported  = &TransactionResource{}
 )
 
 // Register this resource with the container to setup all the routes
@@ -44,8 +43,8 @@ func (r *TransactionResource) Returns() interface{} {
 func (r *TransactionResource) Validate(context smolder.APIContext, data interface{}, request *restful.Request) error {
 	ups := data.(*TransactionPostStruct)
 
-	if ups.Transaction.Amount <= 0 {
-		return errors.New("Invalid transaction amount")
+	if ups.Transaction.Amount == 0 {
+		// return errors.New("Invalid transaction amount")
 	}
 
 	return nil
