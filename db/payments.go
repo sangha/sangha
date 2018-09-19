@@ -308,3 +308,49 @@ func (payment *Payment) Save(context *APIContext) error {
 		payment.RemoteName, payment.RemoteTransactionID, payment.RemoteBankID, payment.Source).Scan(&payment.ID)
 	return err
 }
+
+func (context *APIContext) LatestPaymentFromSource(source string) (Payment, error) {
+	payment := Payment{}
+
+	err := context.QueryRow("SELECT id, budget_id, created_at, amount, currency, code, purpose, remote_account, "+
+		"remote_name, remote_transaction_id, remote_bank_id, source, pending "+
+		"FROM payments "+
+		"WHERE source = $1 "+
+		"ORDER BY created_at DESC LIMIT 1", source).
+		Scan(&payment.ID, &payment.BudgetID, &payment.CreatedAt, &payment.Amount, &payment.Currency, &payment.Code,
+			&payment.Purpose, &payment.RemoteAccount, &payment.RemoteName, &payment.RemoteTransactionID, &payment.RemoteBankID,
+			&payment.Source, &payment.Pending)
+
+	return payment, err
+}
+
+// SearchPayments searches database for payments
+func (context *APIContext) SearchPayments(term string) ([]Payment, error) {
+	payments := []Payment{}
+
+	rows, err := context.Query("SELECT DISTINCT id FROM payments WHERE "+
+		"(LOWER(purpose) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(remote_account) LIKE LOWER('%' || $1 || '%') OR "+
+		"LOWER(remote_name) LIKE LOWER('%' || $1 || '%'))", term)
+	if err != nil {
+		return payments, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		err = rows.Scan(&id)
+		if err != nil {
+			return payments, err
+		}
+
+		p, err := context.LoadPaymentByID(id)
+		if err != nil {
+			return payments, err
+		}
+
+		payments = append(payments, p)
+	}
+
+	return payments, nil
+}
