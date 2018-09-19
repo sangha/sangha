@@ -112,6 +112,7 @@ func InitDatabase() {
 			  user_id			int,
 			  parent			bigserial,
 			  name       		text      	NOT NULL,
+			  description		text,
 			  private			bool		DEFAULT false,
 			  private_balance	bool		DEFAULT true,
 			  CONSTRAINT  		uk_budgets_uuid 		UNIQUE (uuid),
