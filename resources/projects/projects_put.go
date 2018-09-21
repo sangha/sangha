@@ -50,7 +50,7 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 			return
 		} */
 
-	pps := data.(*ProjectPutStruct)
+	pps := data.(*ProjectPostStruct)
 	project.Name = pps.Project.Name
 	project.Summary = pps.Project.Summary
 	project.About = pps.Project.About
