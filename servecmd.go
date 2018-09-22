@@ -17,9 +17,11 @@ import (
 	"gitlab.techcultivation.org/sangha/sangha/resources/codes"
 	"gitlab.techcultivation.org/sangha/sangha/resources/payments"
 	"gitlab.techcultivation.org/sangha/sangha/resources/projects"
+	"gitlab.techcultivation.org/sangha/sangha/resources/searches"
+	"gitlab.techcultivation.org/sangha/sangha/resources/sessions"
+	"gitlab.techcultivation.org/sangha/sangha/resources/statistics"
 	"gitlab.techcultivation.org/sangha/sangha/resources/transactions"
 	"gitlab.techcultivation.org/sangha/sangha/resources/users"
-	// "gitlab.techcultivation.org/sangha/sangha/resources/sessions"
 )
 
 var (
@@ -52,13 +54,15 @@ func executeServe() error {
 			r.Register(wsContainer, smolderConfig, context)
 		}
 	}(
-		// &sessions.SessionResource{},
+		&sessions.SessionResource{},
 		&users.UserResource{},
 		&projects.ProjectResource{},
 		&budgets.BudgetResource{},
 		&codes.CodeResource{},
 		&transactions.TransactionResource{},
 		&payments.PaymentResource{},
+		&statistics.StatisticsResource{},
+		&searches.SearchesResource{},
 	)
 
 	if config.Settings.API.SwaggerFilePath != "" {
