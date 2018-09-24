@@ -96,8 +96,8 @@ func (context *APIContext) LoadAllProjects() ([]Project, error) {
 
 // Update a project in the database
 func (project *Project) Update(context *APIContext) error {
-	_, err := context.Exec("UPDATE projects SET about = $1, summary = $2, slug = $3, name = $4, website = $5, license = $6, repository = $7, private = $8, private_balance = $9, processing_cut = $10 WHERE id = $11",
-		project.About, project.Summary, project.Slug, project.Name, project.Website, project.License, project.Repository, project.Private, project.PrivateBalance, project.ProcessingCut, project.ID)
+	_, err := context.Exec("UPDATE projects SET about = $1, summary = $2, slug = $3, name = $4, website = $5, license = $6, repository = $7, private = $8, private_balance = $9, processing_cut = $10, activated = $11 WHERE id = $12",
+		project.About, project.Summary, project.Slug, project.Name, project.Website, project.License, project.Repository, project.Private, project.PrivateBalance, project.ProcessingCut, project.Activated, project.ID)
 
 	projectsCache.Delete(project.UUID)
 	return err
@@ -107,8 +107,9 @@ func (project *Project) Update(context *APIContext) error {
 func (project *Project) Save(context *APIContext) error {
 	project.UUID, _ = UUID()
 
-	err := context.QueryRow("INSERT INTO projects (uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id",
-		project.UUID, project.Slug, project.Name, project.Summary, project.About, project.Website, project.License, project.Repository, project.Logo, time.Now().UTC(), project.Private, project.PrivateBalance, project.ProcessingCut).Scan(&project.ID)
+	err := context.QueryRow("INSERT INTO projects (uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id",
+		project.UUID, project.Slug, project.Name, project.Summary, project.About, project.Website, project.License, project.Repository, project.Logo, time.Now().UTC(), project.Private, project.PrivateBalance).Scan(&project.ID)
+
 	projectsCache.Delete(project.UUID)
 	return err
 }
