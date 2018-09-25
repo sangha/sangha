@@ -40,15 +40,14 @@ func (r *ProjectResource) Put(context smolder.APIContext, data interface{}, requ
 		return
 	}
 
-	/*	auth, err := context.Authentication(request)
-		if err != nil || (auth.(db.User).ID != 1 && auth.(db.User).ID != project.UserID) {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-				http.StatusUnauthorized,
-				false,
-				"Admin permission required for this operation",
-				"ProjectResource PUT"))
-			return
-		} */
+	auth, err := context.Authentication(request)
+	if err != nil || (auth.(db.User).ID != 1) { // && auth.(db.User).ID != project.UserID) {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"ProjectResource PUT"))
+		return
+	}
 
 	pps := data.(*ProjectPostStruct)
 	project.Name = pps.Project.Name

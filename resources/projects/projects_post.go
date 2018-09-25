@@ -44,19 +44,18 @@ func (r *ProjectResource) PostParams() []*restful.Parameter {
 
 // Post processes an incoming POST (create) request
 func (r *ProjectResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
-	/*auth, err := context.Authentication(request)
-		if err != nil || auth.(db.Project).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
+	auth, err := context.Authentication(request)
+	if err != nil || auth.(db.Project).ID != 1 {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusUnauthorized,
-			false,
 			"Admin permission required for this operation",
 			"ProjectResource POST"))
 		return
-	}*/
+	}
 
 	ctx := context.(*db.APIContext)
 	ups := data.(*ProjectPostStruct)
-	_, err := ctx.LoadProjectBySlug(ups.Project.Slug)
+	_, err = ctx.LoadProjectBySlug(ups.Project.Slug)
 	if err == nil {
 		smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
 			http.StatusBadRequest,
