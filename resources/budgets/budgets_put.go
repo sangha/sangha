@@ -40,15 +40,14 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 		return
 	}
 
-	/*	auth, err := context.Authentication(request)
-		if err != nil || (auth.(db.User).ID != 1 && auth.(db.User).ID != budget.UserID) {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-				http.StatusUnauthorized,
-				false,
-				"Admin permission required for this operation",
-				"BudgetResource PUT"))
-			return
-		} */
+	auth, err := context.Authentication(request)
+	if err != nil || (auth.(db.User).ID != 1) { // && auth.(db.User).ID != budget.UserID) {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"BudgetResource PUT"))
+		return
+	}
 
 	pps := data.(*BudgetPutStruct)
 	project, err := context.(*db.APIContext).LoadProjectByUUID(pps.Budget.Project)
@@ -56,7 +55,7 @@ func (r *BudgetResource) Put(context smolder.APIContext, data interface{}, reque
 		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusBadRequest,
 			"No such project",
-			"BudgetResource POST"))
+			"BudgetResource PUT"))
 		return
 	}
 
