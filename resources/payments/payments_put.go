@@ -17,7 +17,7 @@ type PaymentPutStruct struct {
 
 // PutAuthRequired returns true because all requests need authentication
 func (r *PaymentResource) PutAuthRequired() bool {
-	return false
+	return true
 }
 
 // PutDoc returns the description of this API endpoint
@@ -32,6 +32,15 @@ func (r *PaymentResource) PutParams() []*restful.Parameter {
 
 // Put processes an incoming PUT (update) request
 func (r *PaymentResource) Put(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
+	auth, err := context.Authentication(request)
+	if err != nil || (auth.(db.User).ID != 1) { // && auth.(db.User).ID != project.UserID) {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"PaymentResource PUT"))
+		return
+	}
+
 	ctx := context.(*db.APIContext)
 	resp := PaymentResponse{}
 	resp.Init(context)
@@ -43,16 +52,6 @@ func (r *PaymentResource) Put(context smolder.APIContext, data interface{}, requ
 		r.NotFound(request, response)
 		return
 	}
-
-	/*	auth, err := context.Authentication(request)
-		if err != nil || (auth.(db.User).ID != 1 && auth.(db.User).ID != project.UserID) {
-			smolder.ErrorResponseHandler(request, response, smolder.NewErrorResponse(
-				http.StatusUnauthorized,
-				false,
-				"Admin permission required for this operation",
-				"ProjectResource PUT"))
-			return
-		} */
 
 	pps := data.(*PaymentPostStruct)
 	payment.Code = pps.Payment.Code

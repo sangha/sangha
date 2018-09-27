@@ -1,6 +1,8 @@
 package searches
 
 import (
+	"net/http"
+
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
@@ -9,7 +11,7 @@ import (
 
 // GetAuthRequired returns true because all requests need authentication
 func (r *SearchesResource) GetAuthRequired() bool {
-	return false
+	return true
 }
 
 // GetByIDsAuthRequired returns true because all requests need authentication
@@ -49,6 +51,15 @@ func (r *SearchesResource) GetByIDs(context smolder.APIContext, request *restful
 
 // Get sends out items matching the query parameters
 func (r *SearchesResource) Get(context smolder.APIContext, request *restful.Request, response *restful.Response, params map[string][]string) {
+	auth, err := context.Authentication(request)
+	if err != nil || auth.(db.User).ID != 1 {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"SearchesResource GET"))
+		return
+	}
+
 	resp := SearchResponse{}
 	resp.Init(context)
 

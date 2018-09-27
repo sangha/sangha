@@ -17,7 +17,7 @@ type TransactionPutStruct struct {
 
 // PutAuthRequired returns true because all requests need authentication
 func (r *TransactionResource) PutAuthRequired() bool {
-	return false
+	return true
 }
 
 // PutDoc returns the description of this API endpoint

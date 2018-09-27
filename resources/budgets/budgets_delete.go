@@ -27,7 +27,7 @@ func (r *BudgetResource) DeleteParams() []*restful.Parameter {
 // Post processes an incoming POST (create) request
 func (r *BudgetResource) Delete(context smolder.APIContext, request *restful.Request, response *restful.Response) {
 	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.Budget).ID != 1 {
+	if err != nil || auth.(db.User).ID != 1 {
 		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
 			http.StatusUnauthorized,
 			"Admin permission required for this operation",

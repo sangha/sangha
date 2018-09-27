@@ -37,7 +37,16 @@ func (r *UserResource) GetByIDs(context smolder.APIContext, request *restful.Req
 	resp := UserResponse{}
 	resp.Init(context)
 
+	auth, _ := context.Authentication(request)
 	for _, id := range ids {
+		if auth == nil || (auth.(db.User).ID != 1 && auth.(db.User).UUID != id) {
+			smolder.ErrorResponseHandler(request, response, nil, smolder.NewErrorResponse(
+				http.StatusUnauthorized,
+				"Auth permission required for this operation",
+				"UserResource GET"))
+			return
+		}
+
 		user, err := context.(*db.APIContext).GetUserByUUID(id)
 		if err != nil {
 			r.NotFound(request, response)

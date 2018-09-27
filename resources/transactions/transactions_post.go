@@ -38,6 +38,15 @@ func (r *TransactionResource) PostParams() []*restful.Parameter {
 
 // Post processes an incoming POST (create) request
 func (r *TransactionResource) Post(context smolder.APIContext, data interface{}, request *restful.Request, response *restful.Response) {
+	auth, err := context.Authentication(request)
+	if err != nil || auth.(db.User).ID != 1 {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"TransactionResource POST"))
+		return
+	}
+
 	ctx := context.(*db.APIContext)
 	ups := data.(*TransactionPostStruct)
 	log.Printf("Got transaction request: %+v\n", ups)

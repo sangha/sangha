@@ -14,7 +14,7 @@ import (
 
 // GetAuthRequired returns true because all requests need authentication
 func (r *TransactionResource) GetAuthRequired() bool {
-	return false
+	return true
 }
 
 // GetByIDsAuthRequired returns true because all requests need authentication
@@ -45,6 +45,15 @@ func (r *TransactionResource) GetParams() []*restful.Parameter {
 
 // GetByIDs sends out all items matching a set of IDs
 func (r *TransactionResource) GetByIDs(context smolder.APIContext, request *restful.Request, response *restful.Response, ids []string) {
+	auth, err := context.Authentication(request)
+	if err != nil || auth.(db.User).ID != 1 {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"TransactionResource GET"))
+		return
+	}
+
 	resp := TransactionResponse{}
 	resp.Init(context)
 
@@ -64,11 +73,19 @@ func (r *TransactionResource) GetByIDs(context smolder.APIContext, request *rest
 
 // Get sends out items matching the query parameters
 func (r *TransactionResource) Get(context smolder.APIContext, request *restful.Request, response *restful.Response, params map[string][]string) {
+	auth, err := context.Authentication(request)
+	if err != nil || auth.(db.User).ID != 1 {
+		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+			http.StatusUnauthorized,
+			"Admin permission required for this operation",
+			"TransactionResource GET"))
+		return
+	}
+
 	ctx := context.(*db.APIContext)
 	resp := TransactionResponse{}
 	resp.Init(context)
 
-	var err error
 	var transactions []db.Transaction
 
 	if len(params["project"]) > 0 {
