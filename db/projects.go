@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type Project struct {
 	PrivateBalance bool
 	ProcessingCut  int64
 	Activated      bool
+	UserID         *int64
 }
 
 // LoadProjectByUUID loads a project by UUID from the database
@@ -30,8 +32,12 @@ func (context *APIContext) LoadProjectByUUID(uuid string) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated FROM projects WHERE uuid = $1", uuid).
-		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated)
+	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated, user_id FROM projects WHERE uuid = $1", uuid).
+		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated, &project.UserID)
+
+	if !project.HasAccess(context.Auth) {
+		return Project{}, errors.New("No such project")
+	}
 	return project, err
 }
 
@@ -42,8 +48,12 @@ func (context *APIContext) GetProjectByID(id int64) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated FROM projects WHERE id = $1", id).
-		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated)
+	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated, user_id FROM projects WHERE id = $1", id).
+		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated, &project.UserID)
+
+	if !project.HasAccess(context.Auth) {
+		return Project{}, errors.New("No such project")
+	}
 	return project, err
 }
 
@@ -66,8 +76,12 @@ func (context *APIContext) LoadProjectBySlug(slug string) (Project, error) {
 		return project, ErrInvalidID
 	}
 
-	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated FROM projects WHERE slug = $1", slug).
-		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated)
+	err := context.QueryRow("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated, user_id FROM projects WHERE slug = $1", slug).
+		Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated, &project.UserID)
+
+	if !project.HasAccess(context.Auth) {
+		return Project{}, errors.New("No such project")
+	}
 	return project, err
 }
 
@@ -75,7 +89,7 @@ func (context *APIContext) LoadProjectBySlug(slug string) (Project, error) {
 func (context *APIContext) LoadAllProjects() ([]Project, error) {
 	projects := []Project{}
 
-	rows, err := context.Query("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated FROM projects")
+	rows, err := context.Query("SELECT id, uuid, slug, name, summary, about, website, license, repository, logo, created_at, private, private_balance, processing_cut, activated, user_id FROM projects")
 	if err != nil {
 		return projects, err
 	}
@@ -83,11 +97,14 @@ func (context *APIContext) LoadAllProjects() ([]Project, error) {
 	defer rows.Close()
 	for rows.Next() {
 		project := Project{}
-		err = rows.Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated)
+		err = rows.Scan(&project.ID, &project.UUID, &project.Slug, &project.Name, &project.Summary, &project.About, &project.Website, &project.License, &project.Repository, &project.Logo, &project.CreatedAt, &project.Private, &project.PrivateBalance, &project.ProcessingCut, &project.Activated, &project.UserID)
 		if err != nil {
 			return projects, err
 		}
 
+		if !project.HasAccess(context.Auth) {
+			continue
+		}
 		projects = append(projects, project)
 	}
 

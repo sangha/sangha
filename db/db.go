@@ -65,6 +65,7 @@ func InitDatabase() {
 			  name		text	PRIMARY KEY,
 			  value		text
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS users
 			(
 			  id          	bigserial 	PRIMARY KEY,
@@ -83,6 +84,7 @@ func InitDatabase() {
 			  CONSTRAINT  	uk_users_uuid 	UNIQUE (uuid),
 			  CONSTRAINT  	uk_users_email 	UNIQUE (email)
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS projects
 			(
 			  id          		bigserial 		PRIMARY KEY,
@@ -100,10 +102,13 @@ func InitDatabase() {
 			  private_balance	bool			DEFAULT true,
 			  processing_cut	int				DEFAULT 10,
 			  activated   		bool			DEFAULT false,
+			  user_id			int,
 			  CONSTRAINT  		uk_projects_uuid 		UNIQUE (uuid),
 			  CONSTRAINT  		uk_projects_slug 		UNIQUE (slug),
-			  CONSTRAINT  		uk_projects_repository	UNIQUE (repository)
+			  CONSTRAINT  		uk_projects_repository	UNIQUE (repository),
+			  CONSTRAINT    	fk_projects_user_id		FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS budgets
 			(
 			  id          		bigserial 	PRIMARY KEY,
@@ -137,6 +142,7 @@ func InitDatabase() {
 			  pending				bool			DEFAULT true,
 			  CONSTRAINT    		fk_payments_budget_id	FOREIGN KEY (budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS transactions
 			(
 			  id          		bigserial 		PRIMARY KEY,
@@ -152,6 +158,7 @@ func InitDatabase() {
 			  CONSTRAINT    	fk_transactions_to_budget_id	FOREIGN KEY (to_budget_id) REFERENCES budgets (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT,
 			  CONSTRAINT    	fk_transactions_payment_id		FOREIGN KEY (payment_id) REFERENCES payments (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE RESTRICT
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS codes
 			(
 			  id			bigserial 		PRIMARY KEY,
@@ -163,6 +170,7 @@ func InitDatabase() {
 			  CONSTRAINT    uk_codes_budget_ids	UNIQUE (budget_ids, ratios, user_id),
 			  CONSTRAINT    fk_codes_user_id	FOREIGN KEY (user_id) REFERENCES users (id) MATCH SIMPLE ON UPDATE CASCADE ON DELETE CASCADE
 			)`,
+
 		`CREATE TABLE IF NOT EXISTS contributors
 			(
 			  id			bigserial 		PRIMARY KEY,
