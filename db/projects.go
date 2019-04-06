@@ -66,6 +66,10 @@ func (context *APIContext) GetProjectByUUID(uuid string) (Project, error) {
 	}
 
 	project = *projectsCache.Data().(*Project)
+
+	if !project.HasAccess(context.Auth) {
+		return Project{}, errors.New("No such project")
+	}
 	return project, nil
 }
 
@@ -203,6 +207,14 @@ func (project *Project) BalanceStats(context *APIContext) ([]int64, error) {
 	}
 
 	return b, nil
+}
+
+func (project *Project) HasAccess(user *User) bool {
+	return !project.Private || user.ID == 1 || (project.UserID != nil && user.ID == *project.UserID)
+}
+
+func (project *Project) HasTransactionAccess(user *User) bool {
+	return !project.PrivateBalance || user.ID == 1 || (project.UserID != nil && user.ID == *project.UserID)
 }
 
 // SearchProjects searches database for projects
