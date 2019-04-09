@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -161,7 +162,12 @@ func (budget *Budget) Delete(context *APIContext) error {
 // Balance returns this budget's total balance
 func (budget *Budget) Balance(context *APIContext) (int64, error) {
 	if !budget.HasAccess(context.Auth) {
+		log.Println("no access:", context.Auth.ID, budget.UserID)
 		return 0, errors.New("No such budget")
+	}
+	if !budget.HasTransactionAccess(context.Auth) {
+		log.Println("private balance:", context.Auth.ID, budget.UserID)
+		return 0, errors.New("No access to private balance")
 	}
 
 	var val int64
@@ -172,10 +178,15 @@ func (budget *Budget) Balance(context *APIContext) (int64, error) {
 
 // BalanceStats returns this budget's total balance for the past months
 func (budget *Budget) BalanceStats(context *APIContext) ([]int64, error) {
+	if !budget.HasAccess(context.Auth) {
+		return []int64{}, errors.New("No such budget")
+	}
+	if !budget.HasTransactionAccess(context.Auth) {
+		return []int64{}, errors.New("No access to private balance")
+	}
+
 	var val []int64
-
 	lom := time.Now().UTC()
-
 	b := int64(-1)
 	for b != 0 {
 		err := context.QueryRow("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE budget_id = $1 AND created_at <= $2", budget.ID, lom).
@@ -194,6 +205,10 @@ func (budget *Budget) BalanceStats(context *APIContext) ([]int64, error) {
 
 func (budget *Budget) HasAccess(user *User) bool {
 	return !budget.Private || user.ID == 1 || (budget.UserID != nil && user.ID == *budget.UserID)
+}
+
+func (budget *Budget) HasTransactionAccess(user *User) bool {
+	return !budget.PrivateBalance || user.ID == 1 || (budget.UserID != nil && user.ID == *budget.UserID)
 }
 
 // SearchBudgets searches database for budgets
