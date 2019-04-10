@@ -68,7 +68,8 @@ func (context *APIContext) Authentication(request *restful.Request) (interface{}
 }
 
 func (context *APIContext) SetAuth(auth interface{}) {
-	context.Auth = auth.(*User)
+	u := auth.(User)
+	context.Auth = &u
 }
 
 // LogSummary logs out the current context stats
