@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"time"
 )
 
@@ -45,6 +46,10 @@ func (project *Project) LoadTransactions(context *APIContext) ([]Transaction, er
 		return []Transaction{}, err
 	}
 
+	if !b.HasTransactionAccess(context.Auth) {
+		return []Transaction{}, errors.New("No such project")
+	}
+
 	return b.LoadTransactions(context)
 	/*	transactions := []Transaction{}
 
@@ -74,6 +79,10 @@ func (project *Project) LoadTransactions(context *APIContext) ([]Transaction, er
 
 // LoadTransactions loads all transactions for a budget
 func (budget *Budget) LoadTransactions(context *APIContext) ([]Transaction, error) {
+	if !budget.HasTransactionAccess(context.Auth) {
+		return []Transaction{}, errors.New("No such budget")
+	}
+
 	transactions := []Transaction{}
 
 	rows, err := context.Query("SELECT id, budget_id, from_budget_id, to_budget_id, amount, created_at, purpose, payment_id "+
