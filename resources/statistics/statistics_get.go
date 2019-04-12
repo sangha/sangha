@@ -1,8 +1,6 @@
 package statistics
 
 import (
-	"net/http"
-
 	"gitlab.techcultivation.org/sangha/sangha/db"
 
 	"github.com/emicklei/go-restful"
@@ -35,15 +33,6 @@ func (r *StatisticsResource) GetParams() []*restful.Parameter {
 
 // Get sends out items matching the query parameters
 func (r *StatisticsResource) Get(context smolder.APIContext, request *restful.Request, response *restful.Response, params map[string][]string) {
-	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.User).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
-			http.StatusUnauthorized,
-			"Admin permission required for this operation",
-			"StatisticsResource GET"))
-		return
-	}
-
 	resp := StatisticsResponse{}
 	resp.Init(context)
 

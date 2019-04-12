@@ -45,22 +45,28 @@ func (r *TransactionResource) GetParams() []*restful.Parameter {
 
 // GetByIDs sends out all items matching a set of IDs
 func (r *TransactionResource) GetByIDs(context smolder.APIContext, request *restful.Request, response *restful.Response, ids []string) {
-	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.User).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
-			http.StatusUnauthorized,
-			"Admin permission required for this operation",
-			"TransactionResource GET"))
-		return
-	}
-
 	resp := TransactionResponse{}
 	resp.Init(context)
 
+	ctx := context.(*db.APIContext)
+
 	for _, id := range ids {
 		iid, _ := strconv.ParseInt(id, 10, 0)
-		transaction, err := context.(*db.APIContext).LoadTransactionByID(iid)
+		transaction, err := ctx.LoadTransactionByID(iid)
 		if err != nil {
+			r.NotFound(request, response)
+			return
+		}
+
+		budget, err := ctx.LoadBudgetByID(transaction.BudgetID)
+		if err != nil {
+			smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
+				http.StatusInternalServerError,
+				"Can't load budget",
+				"TransactionsResource GET"))
+			return
+		}
+		if !budget.HasTransactionAccess(ctx.Auth) {
 			r.NotFound(request, response)
 			return
 		}
@@ -73,15 +79,6 @@ func (r *TransactionResource) GetByIDs(context smolder.APIContext, request *rest
 
 // Get sends out items matching the query parameters
 func (r *TransactionResource) Get(context smolder.APIContext, request *restful.Request, response *restful.Response, params map[string][]string) {
-	auth, err := context.Authentication(request)
-	if err != nil || auth.(db.User).ID != 1 {
-		smolder.ErrorResponseHandler(request, response, err, smolder.NewErrorResponse(
-			http.StatusUnauthorized,
-			"Admin permission required for this operation",
-			"TransactionResource GET"))
-		return
-	}
-
 	ctx := context.(*db.APIContext)
 	resp := TransactionResponse{}
 	resp.Init(context)
@@ -90,7 +87,7 @@ func (r *TransactionResource) Get(context smolder.APIContext, request *restful.R
 
 	if len(params["project"]) > 0 {
 		var project db.Project
-		project, err = context.(*db.APIContext).LoadProjectByUUID(params["project"][0])
+		project, err := ctx.LoadProjectByUUID(params["project"][0])
 		if err != nil {
 			r.NotFound(request, response)
 			return
@@ -106,7 +103,7 @@ func (r *TransactionResource) Get(context smolder.APIContext, request *restful.R
 		}
 	} else if len(params["budget"]) > 0 {
 		var budget db.Budget
-		budget, err = ctx.LoadBudgetByUUID(params["budget"][0])
+		budget, err := ctx.LoadBudgetByUUID(params["budget"][0])
 		if err != nil {
 			r.NotFound(request, response)
 			return
@@ -129,7 +126,7 @@ func (r *TransactionResource) Get(context smolder.APIContext, request *restful.R
 		from, _ = time.Parse(timeLayout, params["from_date"][0])
 	}
 	if len(params["to_date"]) > 0 {
-		to, err = time.Parse(timeLayout, params["to_date"][0])
+		to, err := time.Parse(timeLayout, params["to_date"][0])
 		if err == nil {
 			to = to.Add(time.Hour * 24)
 		}

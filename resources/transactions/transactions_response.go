@@ -60,7 +60,10 @@ func prepareTransactionResponse(context smolder.APIContext, transaction db.Trans
 		Amount:    transaction.Amount,
 		CreatedAt: transaction.CreatedAt,
 		Purpose:   transaction.Purpose,
-		PaymentID: transaction.PaymentID,
+	}
+
+	if ctx.Auth != nil && ctx.Auth.ID == 1 {
+		resp.PaymentID = transaction.PaymentID
 	}
 
 	budget, _ := ctx.LoadBudgetByID(transaction.BudgetID)
