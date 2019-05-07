@@ -239,11 +239,7 @@ func migrateDatabase(from, to int) error {
 
 // UUID returns a new unique identifier
 func UUID() (string, error) {
-	u, err := uuid.NewV4()
-	if err != nil {
-		return "", err
-	}
-
+	u := uuid.NewV4()
 	uuid := strings.Join(strings.Split(u.String(), "-"), "")
 	return uuid, nil
 }
