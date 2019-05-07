@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	money "github.com/muesli/go-money"
+	money "github.com/Rhymond/go-money"
 	"github.com/muesli/toktok"
 	"gitlab.techcultivation.org/sangha/mq"
 )
