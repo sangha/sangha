@@ -13,6 +13,8 @@ import (
 )
 
 var (
+	configFile, logLevelStr string
+
 	// RootCmd is the core command used for cli-arg parsing
 	RootCmd = &cobra.Command{
 		Use:   "sangha",
@@ -25,10 +27,12 @@ var (
 )
 
 func main() {
-	var configFile, logLevelStr string
-	RootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "config.json", "use this config file (JSON format)")
-	RootCmd.PersistentFlags().StringVarP(&logLevelStr, "loglevel", "l", "info", "log level")
+	if err := RootCmd.Execute(); err != nil {
+		os.Exit(-1)
+	}
+}
 
+func initConfig() {
 	logLevel, err := log.ParseLevel(logLevelStr)
 	if err != nil {
 		log.Fatal(err)
@@ -44,8 +48,12 @@ func main() {
 
 	db.SetupPostgres(config.Settings.Connections.PostgreSQL)
 	mq.SetupAMQP(config.Settings.Connections.AMQP)
+	db.GetDatabase()
+	db.InitDatabase()
+}
 
-	if err := RootCmd.Execute(); err != nil {
-		os.Exit(-1)
-	}
+func init() {
+	cobra.OnInitialize(initConfig)
+	RootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "config.json", "use this config file (JSON format)")
+	RootCmd.PersistentFlags().StringVarP(&logLevelStr, "loglevel", "l", "info", "log level")
 }
