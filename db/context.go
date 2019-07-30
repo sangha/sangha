@@ -19,6 +19,8 @@ type APIContext struct {
 	db        *sql.DB
 	Queries   []PgQuery
 	txIDCount int
+
+	Auth *User
 }
 
 // APIContextTx is a transactional API conteollyxt
@@ -63,6 +65,10 @@ func (context *APIContext) Authentication(request *restful.Request) (interface{}
 	}
 
 	return context.GetUserByAccessToken(t)
+}
+
+func (context *APIContext) SetAuth(auth interface{}) {
+	context.Auth = auth.(*User)
 }
 
 // LogSummary logs out the current context stats
