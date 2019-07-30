@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"math/rand"
 	"strconv"
 	"time"
@@ -25,6 +26,10 @@ func (context *APIContext) LoadBudgetByID(id int64) (Budget, error) {
 
 	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, description, private, private_balance FROM budgets WHERE id = $1", id).
 		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Description, &budget.Private, &budget.PrivateBalance)
+
+	if !budget.HasAccess(context.Auth) {
+		return Budget{}, errors.New("No such budget")
+	}
 	return budget, err
 }
 
@@ -37,6 +42,10 @@ func (context *APIContext) LoadBudgetByUUID(uuid string) (Budget, error) {
 
 	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, description, private, private_balance FROM budgets WHERE uuid = $1", uuid).
 		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Description, &budget.Private, &budget.PrivateBalance)
+
+	if !budget.HasAccess(context.Auth) {
+		return Budget{}, errors.New("No such budget")
+	}
 	return budget, err
 }
 
@@ -49,6 +58,10 @@ func (context *APIContext) LoadRootBudgetForProject(project *Project) (Budget, e
 
 	err := context.QueryRow("SELECT id, uuid, project_id, user_id, parent, name, description, private, private_balance FROM budgets WHERE project_id = $1 AND parent = 0 ORDER BY id ASC", project.ID).
 		Scan(&budget.ID, &budget.UUID, &budget.ProjectID, &budget.UserID, &budget.ParentID, &budget.Name, &budget.Description, &budget.Private, &budget.PrivateBalance)
+
+	if !budget.HasAccess(context.Auth) {
+		return Budget{}, errors.New("No such budget")
+	}
 	return budget, err
 }
 
@@ -69,6 +82,9 @@ func (context *APIContext) LoadBudgets(project *Project) ([]Budget, error) {
 			return budgets, err
 		}
 
+		if !budget.HasAccess(context.Auth) {
+			continue
+		}
 		budgets = append(budgets, budget)
 	}
 
@@ -84,6 +100,10 @@ func (context *APIContext) GetBudgetByUUID(uuid string) (Budget, error) {
 	}
 
 	budget = *budgetsCache.Data().(*Budget)
+
+	if !budget.HasAccess(context.Auth) {
+		return Budget{}, errors.New("No such budget")
+	}
 	return budget, nil
 }
 
@@ -104,6 +124,9 @@ func (context *APIContext) LoadAllBudgets() ([]Budget, error) {
 			return budgets, err
 		}
 
+		if !budget.HasAccess(context.Auth) {
+			continue
+		}
 		budgets = append(budgets, budget)
 	}
 
@@ -137,6 +160,10 @@ func (budget *Budget) Delete(context *APIContext) error {
 
 // Balance returns this budget's total balance
 func (budget *Budget) Balance(context *APIContext) (int64, error) {
+	if !budget.HasAccess(context.Auth) {
+		return 0, errors.New("No such budget")
+	}
+
 	var val int64
 	err := context.QueryRow("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE budget_id = $1", budget.ID).
 		Scan(&val)
@@ -163,6 +190,10 @@ func (budget *Budget) BalanceStats(context *APIContext) ([]int64, error) {
 	}
 
 	return val, nil
+}
+
+func (budget *Budget) HasAccess(user *User) bool {
+	return !budget.Private || user.ID == 1 || (budget.UserID != nil && user.ID == *budget.UserID)
 }
 
 // SearchBudgets searches database for budgets
