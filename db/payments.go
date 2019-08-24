@@ -146,7 +146,7 @@ func (context *APIContext) LoadPendingPayments(direction int) ([]Payment, error)
 }
 
 // Process turns a payment into various budget transactions
-func (payment *Payment) Process(context *APIContext) error {
+func (payment *Payment) Process(context *APIContext, cutBudget int64) error {
 	code, err := context.LoadCodeByCode(payment.Code)
 	if err != nil {
 		return err
@@ -179,8 +179,6 @@ func (payment *Payment) Process(context *APIContext) error {
 		}
 		budgets = append(budgets, budget)
 	}
-
-	cutBudget := int64(49)
 
 	// transaction to cct account
 	t := Transaction{
