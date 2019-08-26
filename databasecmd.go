@@ -9,6 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gitlab.techcultivation.org/sangha/sangha/config"
 	"gitlab.techcultivation.org/sangha/sangha/db"
 )
 
@@ -48,6 +49,35 @@ func executeDatabaseInit() error {
 
 	db.GetDatabase()
 	db.InitDatabase()
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("New password for user admin: ")
+	password, _ := reader.ReadString('\n')
+
+	db.GetDatabase()
+	context := &db.APIContext{
+		Config: *config.Settings,
+	}
+	ctx := context.NewAPIContext().(*db.APIContext)
+
+	user := db.User{
+		Nickname: "admin",
+		Email:    "admin@techcultivation.org",
+		About:    "admin",
+		Address:  []string{},
+		ZIP:      "",
+		City:     "",
+		Country:  "",
+	}
+	err := user.Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = user.UpdatePassword(ctx, password)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
