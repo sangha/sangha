@@ -31,6 +31,10 @@ type Data struct {
 		Stripe     string
 	}
 
+	Processing struct {
+		DonationCutBudget int64
+	}
+
 	PaymentProviders struct {
 		PayPal struct {
 			ClientID string
