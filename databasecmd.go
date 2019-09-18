@@ -88,7 +88,46 @@ func executeDatabaseInit() error {
 		return err
 	}
 
-	err = user.UpdatePassword(ctx, password)
+	err = user.UpdatePassword(ctx, strings.TrimSpace(password))
+	if err != nil {
+		return err
+	}
+
+	project := db.Project{
+		Slug:           "cct",
+		Name:           "CCT",
+		Summary:        "Center for the Cultivation of Technology",
+		About:          "",
+		Website:        "https://techcultivation.org",
+		License:        "AGPL",
+		Repository:     "https://techcultivation.org",
+		Private:        false,
+		PrivateBalance: true,
+	}
+	err = project.Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	budget := db.Budget{
+		ProjectID:      &project.ID,
+		ParentID:       0,
+		Name:           project.Name,
+		Private:        false,
+		PrivateBalance: true,
+	}
+	err = budget.Save(ctx)
+	if err != nil {
+		return err
+	}
+	dbudget := db.Budget{
+		ProjectID:      &project.ID,
+		ParentID:       0,
+		Name:           "Donation Cuts",
+		Private:        false,
+		PrivateBalance: true,
+	}
+	err = dbudget.Save(ctx)
 	if err != nil {
 		return err
 	}
